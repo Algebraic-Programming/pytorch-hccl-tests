@@ -32,8 +32,8 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements_dev.txt
 
-      - name: Install PyTorch (CPU)
-        run: pip install . -f https://download.pytorch.org/whl/torch_stable.html
+      - name: Install package with PyTorch/CPU
+        run: make install
 
       - name: Run Tests
         run: make test
