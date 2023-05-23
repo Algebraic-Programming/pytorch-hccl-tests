@@ -87,3 +87,8 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	pip install . -f https://download.pytorch.org/whl/torch_stable.html
+
+torchrun:
+	export OMP_NUM_THREADS=1
+	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_int.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_float.py --device cpu
