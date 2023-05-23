@@ -13,7 +13,7 @@ with open("HISTORY.rst") as history_file:
 requirements = [
     "Click>=7.0",
     "torch==1.11.0+cpu",
-    "torchvision==0.15.0+cpu",
+    "torchvision==0.12.0+cpu",
     "pydot==1.4.2",
 ]
 
