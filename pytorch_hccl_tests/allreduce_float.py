@@ -32,6 +32,7 @@ parser.add_argument(
     help="largest message size in 2's power",
 )
 
+
 def bench_allreduce(
     vector_size, repeat: int, device, use_int=False, pause=0.05
 ) -> float:
@@ -51,8 +52,6 @@ def bench_allreduce(
         time.sleep(pause)
 
     return time_total / repeat
-
-
 
 
 def main():

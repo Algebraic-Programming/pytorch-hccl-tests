@@ -30,6 +30,7 @@ def dist_init(device: str, rank: int, world_size: int):
         print(f"using device {device} with {backend} backend")
         print(f"world size is {world_size}")
 
+
 def bench_allreduce(
     vector_size, repeat: int, device, use_int=False, pause=0.05
 ) -> float:
