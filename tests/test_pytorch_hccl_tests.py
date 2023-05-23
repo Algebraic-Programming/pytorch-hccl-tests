@@ -4,5 +4,6 @@
 
 import pytest
 
+
 def test_hello_hccl_test():
     assert True
