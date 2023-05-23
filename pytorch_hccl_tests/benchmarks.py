@@ -6,7 +6,6 @@ import torch.distributed as dist
 def bench_allreduce(
     vector_size, repeat: int, device, use_int=False, pause=0.05
 ) -> float:
-
     time_total = 0  # in us
     for _ in range(repeat):
         if use_int:
