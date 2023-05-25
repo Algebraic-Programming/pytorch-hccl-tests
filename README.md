@@ -4,6 +4,8 @@ HCCL tests based on the PyTorch/Ascend adapter.
 
 
 ```bash
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements_dev.txt
 make install
 ```
