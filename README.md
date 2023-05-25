@@ -137,3 +137,7 @@ world size is 2
 #### Bidirectional bandwidth
 
 This benchmark currently deadlocks on CPU/Gloo backend due a known Gloo bug, see https://github.com/pytorch/pytorch/issues/30723
+
+## Known issues
+
+* Gloo backend does not support `reduce_scatter`.
