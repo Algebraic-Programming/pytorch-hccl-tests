@@ -33,6 +33,6 @@ def get_parser():
         "--skip", type=int, default=None, help="Number of warmup iterations"
     )
     parser.add_argument(
-        "--iterations", type=int, default=None, help="Number of main iterations"
+        "--iterations", type=int, default=None, help="Number of iterations"
     )
     return parser

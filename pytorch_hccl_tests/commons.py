@@ -1,9 +1,9 @@
+import logging
+import time
+from typing import Any, List
+
 import torch
 import torch.distributed as dist
-import time
-from typing import List, Any
-import logging
-
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ def get_device(rank: int):
 
 
 def dist_init(device: str, rank: int, world_size: int):
-    # switch communication backend
+    backend = None
     if device == "cpu":
         backend = "gloo"
 
@@ -35,18 +35,14 @@ def dist_init(device: str, rank: int, world_size: int):
             )
         torch.npu.set_device(rank)
         backend = "hccl"
-
     elif device == "cuda":
         torch.cuda.set_device(rank)
         backend = "nccl"
-
     else:
         raise ValueError("unknown device")
 
     dist.init_process_group(backend=backend)
-    if rank == 0:
-        print(f"using device {device} with {backend} backend")
-        print(f"world size is {world_size}")
+    return backend
 
 
 def bench_allreduce(

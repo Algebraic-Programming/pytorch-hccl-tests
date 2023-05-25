@@ -57,7 +57,12 @@ def main():
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
     world_size = int(os.environ["WORLD_SIZE"])
-    dist_init(device, rank, world_size)
+
+    # Initialize torch.distributed
+    backend = dist_init(device, rank, world_size)
+    if rank == 0:
+        print(f"using device {device} with {backend} backend")
+        print(f"world size is {world_size}")
 
     osu_latency(args=args)
 

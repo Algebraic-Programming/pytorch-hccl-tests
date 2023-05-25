@@ -11,15 +11,15 @@ from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 from pytorch_hccl_tests.osu.parser import get_parser
 
 
-def osu_reduce(args):
+def osu_scatter(args):
     rank = dist.get_rank()
-    numprocs = dist.get_world_size()
+    world_size = dist.get_world_size()
     dtype = torch.float32
     device = get_device(rank)
     pg = None
 
-    options = Options("Reduce", args)
-    Utils.check_numprocs(numprocs, rank, limit=3)
+    options = Options("Scatter", args)
+    Utils.check_numprocs(world_size, rank, limit=3)
     Utils.print_header(options.benchmark, rank)
 
     for size in Utils.message_sizes(options):
@@ -28,17 +28,20 @@ def osu_reduce(args):
             options.iterations = options.iterations_large
         iterations = list(range(options.iterations + options.skip))
 
-        msg = torch.rand(int(size / 4), dtype=dtype).to(device)
+        tensor = torch.rand(size, dtype=dtype).to(device)
+        scatter_list = None
+        if rank == 0:
+            scatter_list = [torch.rand(size, dtype=dtype).to(device)] * world_size
 
         dist.barrier()
         for i in iterations:
             if i == options.skip:
                 tic = now()
-            dist.reduce(msg, 0, dist.ReduceOp.SUM, pg, False)
+            dist.scatter(tensor, scatter_list, 0, pg, False)
         toc = now()
         dist.barrier()
 
-        Utils.print_stats(toc, tic, options.iterations, rank, numprocs, size)
+        Utils.print_stats(toc, tic, options.iterations, rank, world_size, size)
 
 
 def main():
@@ -55,7 +58,7 @@ def main():
         print(f"using device {device} with {backend} backend")
         print(f"world size is {world_size}")
 
-    osu_reduce(args=args)
+    osu_scatter(args=args)
 
     # Stop process group
     dist.destroy_process_group()
