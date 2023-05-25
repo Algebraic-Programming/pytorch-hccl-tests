@@ -90,5 +90,16 @@ install: clean ## install the package to the active Python's site-packages
 
 torchrun:
 	export OMP_NUM_THREADS=1
+	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_multi_lat.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_gather.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_reduce.py --device cpu
+	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_scatter.py --device cpu
 	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_int.py --device cpu
 	@torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_float.py --device cpu
