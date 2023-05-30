@@ -9,7 +9,7 @@ services:
         PYTORCH_VER: ${PYTORCH_VERSION}
         MPI_VERSION: ${OPENMPI_VERSION}
       dockerfile: docker/Dockerfile.openmpi
-  devcontainers-pytorch-mpi:
+  vscode:
     image: "${DOCKER_REGISTRY}/${DOCKER_ORG}/pytorch-mpi:v${PYTORCH_VERSION}-vscode-dev"
     build:
       context: .

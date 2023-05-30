@@ -50,6 +50,3 @@ RUN git clone --depth 2 --recursive --single-branch --branch v${PYTORCH_VER}  ht
     rm -rf pytorch/
 
 RUN pip install --no-cache-dir  torch*.whl
-
-COPY test.py .
-COPY pytorch_gloo_bug_30723.py .
