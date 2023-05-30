@@ -1,0 +1,19 @@
+version: "3.3"
+
+services:
+  pytorch-mpi:
+    image: "${DOCKER_REGISTRY}/${DOCKER_ORG}/pytorch-mpi:v${PYTORCH_VERSION}"
+    build:
+      context: .
+      args:
+        PYTORCH_VER: ${PYTORCH_VERSION}
+        MPI_VERSION: ${OPENMPI_VERSION}
+      dockerfile: docker/Dockerfile.openmpi
+  vscode:
+    image: "${DOCKER_REGISTRY}/${DOCKER_ORG}/pytorch-mpi:v${PYTORCH_VERSION}-vscode-dev"
+    build:
+      context: .
+      args:
+        PYTORCH_VER: ${PYTORCH_VERSION}
+        MPI_VERSION: ${OPENMPI_VERSION}
+      dockerfile: docker/Dockerfile.devcontainer.openmpi

@@ -1,0 +1,52 @@
+# hadolint global ignore=DL3003,DL3008,DL3013,DL3015,SC1091
+FROM mcr.microsoft.com/devcontainers/base:jammy
+
+LABEL maintainer="Anastasios Zouzias"
+
+# Installs OpenMPI with PyTorch having distributed with MPI backend enabled
+
+# Install dependencies
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update -qy && \
+    apt-get install -yq g++-9 make cmake \
+    autoconf libibverbs-dev hwloc lam-runtime python3-pip python3-venv python-is-python3 git vim wget bzip2 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-9 100
+
+# Build OpenMPI from source
+ARG MPI_VERSION="4.1.5"
+# See https://github.com/openucx/ucx/wiki/OpenMPI-and-OpenSHMEM-installation-with-UCX#running-open-mpi-with-ucx
+ARG MPI_CONFIGURE_OPTIONS="--without-pmi --enable-mpi1-compatibility  --enable-mpi-thread-multiple --without-slurm --without-verbs --disable-oshmem --disable-dependency-tracking --disable-mpi-fortran --disable-wrapper-rpath --disable-wrapper-runpath"
+ARG MPI_MAKE_OPTIONS="-j10"
+
+RUN mkdir -p /tmp/openmpi-build \
+    && cd /tmp/openmpi-build \
+    && wget --quiet "http://www.openmpi.org/software/ompi/v${MPI_VERSION%.*}/downloads/openmpi-${MPI_VERSION}.tar.bz2" \
+    && tar xjf openmpi-${MPI_VERSION}.tar.bz2 \
+    && cd openmpi-${MPI_VERSION}  \
+    && ./configure ${MPI_CONFIGURE_OPTIONS} \
+    && make ${MPI_MAKE_OPTIONS} \
+    && make install \
+    && ldconfig \
+    && cd / \
+    && rm -rf /tmp/openmpi-build
+
+USER vscode
+WORKDIR /home/vscode
+
+# Install PyTorch
+ARG PYTORCH_VER=1.13.1
+RUN python -m venv venv && venv/bin/pip install --upgrade pip && \
+    . venv/bin/activate && \
+    pip install --no-cache-dir astunparse numpy ninja pyyaml setuptools cmake \
+    cffi typing_extensions future six requests dataclasses sympy
+
+RUN git clone --depth 2 --recursive --single-branch --branch v${PYTORCH_VER}  https://github.com/pytorch/pytorch && \
+    . venv/bin/activate && cd pytorch && \
+    PATH=${PATH}:${HOME}/opt/openmpi/bin LD_LIBRARY_PATH=${HOME}/opt/openmpi/lib USE_CUDA=OFF CMAKE_C_COMPILER=$(which mpicc) CMAKE_CXX_COMPILER=$(which mpicxx) python setup.py build bdist_wheel && \
+    cd .. && \
+    cp pytorch/dist/*.whl . && \
+    rm -rf pytorch/
+
+RUN pip install --no-cache-dir  torch*.whl
