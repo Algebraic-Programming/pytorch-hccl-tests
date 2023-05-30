@@ -6,7 +6,7 @@ import time
 import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, bench_allreduce
+from pytorch_hccl_tests.commons import dist_init, bench_allreduce, print_root
 
 parser = argparse.ArgumentParser()
 
@@ -53,7 +53,7 @@ def main():
     for _ in range(max_power):
         latency = bench_allreduce(vector_size, repeat, device, use_int=True)
         bw = (vector_size * 4) / latency / 1e3  # effective "bandwidth"
-        print(f"(rank {rank}) {vector_size * 4}   {latency}  {bw}")
+        print_root(vector_size, latency, bw)
         vector_size *= 2
 
 

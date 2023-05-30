@@ -80,3 +80,9 @@ def wait_all(async_reqs: List[Any]) -> None:
             if req is not None:
                 req.wait()
                 in_flight_msgs = in_flight_msgs - 1
+
+
+def print_root(vec_size: int, latency: float, bw: float):
+    rank = dist.get_rank()
+    if rank == 0:
+        print(f"(Rank {rank}) {vec_size * 4}   {latency:.3f}  {bw:.6f}")
