@@ -1,12 +1,8 @@
 import argparse
 import os
 import sys
-import time
 
-import torch
-import torch.distributed as dist
-
-from pytorch_hccl_tests.commons import dist_init, bench_allreduce, print_root
+from pytorch_hccl_tests.commons import bench_allreduce, dist_init, print_root
 
 parser = argparse.ArgumentParser()
 
@@ -40,8 +36,7 @@ def main():
     max_power = args.max_power
 
     rank = int(os.environ["LOCAL_RANK"])  # set by `torchrun`
-    world_size = int(os.environ["WORLD_SIZE"])
-    dist_init(device, rank, world_size)
+    dist_init(device, rank)
 
     if rank == 0:
         print("=" * 20)

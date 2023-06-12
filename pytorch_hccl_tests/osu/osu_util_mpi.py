@@ -10,7 +10,6 @@ copyright file COPYRIGHT in the top level OMB directory.
 
 
 import math
-import time
 import logging
 
 import torch
@@ -169,26 +168,3 @@ class Utils:
         if options.min_message_size == 0:
             message_sizes = [0] + message_sizes
         return message_sizes
-
-    def dummy_compute(seconds, request, mode):
-        test_time = 0
-        test_time = Utils.do_compute_and_probe(seconds, request, mode)
-        return test_time
-
-    def do_compute_and_probe(seconds, request, mode="cpu"):
-        test_time = 0
-        if mode == "cpu":
-            Utils.do_compute_cpu(seconds)
-        elif mode == "gpu":
-            Utils.do_compute_gpu(seconds)
-        return test_time
-
-    def do_compute_cpu(seconds):
-        t1 = 0
-        t2 = 0
-        time_elapsed = 0
-        t1 = time.monotonic_ns()
-        while time_elapsed < seconds:
-            Utils.compute_on_host()
-            t2 = time.monotonic_ns()
-            time_elapsed = t2 - t1

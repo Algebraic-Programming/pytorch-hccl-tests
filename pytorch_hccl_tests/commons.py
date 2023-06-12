@@ -3,7 +3,7 @@ import sys
 import time
 from typing import Any, List
 import platform
-    
+
 
 import torch
 import torch.distributed as dist
@@ -24,14 +24,14 @@ def get_device(rank: int):
         return torch.device("cpu")
 
 
-def dist_init(device: str, rank: int, world_size: int):
+def dist_init(device: str, rank: int):
     backend = None
     if device == "cpu":
         backend = "gloo"
 
     elif device == "npu":
         try:
-            import torch_npu
+            import torch_npu  # noqa
         except Exception:
             raise ImportError(
                 "You must install PyTorch Ascend Adaptor from https://gitee.com/ascend/pytorch."
@@ -90,6 +90,7 @@ def print_root(vec_size: int, latency: float, bw: float):
     if rank == 0:
         print(f"(Rank {rank}) {vec_size * 4}   {latency:.3f}  {bw:.6f}")
 
+
 def setup_loggers(filename: str) -> List[Any]:
     file_handler = logging.FileHandler(filename=f"{filename}.log")
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
@@ -106,4 +107,3 @@ def log_env_info(device, backend):
     logger.info(f"PyTorch Gloo enabled?: {torch.distributed.is_gloo_available()}")
     logger.info(f"Using device *{device}* with *{backend}* backend")
     logger.info(f"World size: {world_size}")
-    

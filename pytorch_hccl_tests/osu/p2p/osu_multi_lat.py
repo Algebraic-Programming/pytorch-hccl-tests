@@ -6,7 +6,12 @@ from time import perf_counter as now
 import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, get_device, log_env_info, setup_loggers
+from pytorch_hccl_tests.commons import (
+    dist_init,
+    get_device,
+    log_env_info,
+    setup_loggers,
+)
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 from pytorch_hccl_tests.osu.parser import get_parser
@@ -60,7 +65,7 @@ def osu_multi_lat(args):
 def main():
     args = get_parser().parse_args()
     device = args.device
-    
+
     log_handlers = setup_loggers(__name__)
     log_level = logging.DEBUG
     logging.basicConfig(
@@ -71,10 +76,9 @@ def main():
 
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
-    world_size = int(os.environ["WORLD_SIZE"])
 
     # Initialize torch.distributed
-    backend = dist_init(device, rank, world_size)
+    backend = dist_init(device, rank)
     if rank == 0:
         log_env_info(device, backend)
 

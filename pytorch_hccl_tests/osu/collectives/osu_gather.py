@@ -54,10 +54,9 @@ def main():
 
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
-    world_size = int(os.environ["WORLD_SIZE"])
 
     # Initialize torch.distributed
-    backend = dist_init(device, rank, world_size)
+    backend = dist_init(device, rank)
     if rank == 0:
         log_env_info(device, backend)
 

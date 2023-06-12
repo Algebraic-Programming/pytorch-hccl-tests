@@ -2,13 +2,18 @@ import logging
 import os
 import sys
 from time import perf_counter as now
-import logging
-import pandas as pd
 
+import pandas as pd
 import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, get_device, wait_all, log_env_info, setup_loggers
+from pytorch_hccl_tests.commons import (
+    dist_init,
+    get_device,
+    log_env_info,
+    setup_loggers,
+    wait_all,
+)
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 from pytorch_hccl_tests.osu.parser import get_parser
@@ -29,7 +34,7 @@ def osu_bw(args):
     if rank == 0:
         logger.info("# OMB-Py MPI %s Test" % (options.benchmark))
         logger.info("# %-8s%18s" % ("Size (B)", "Bandwidth (MB/s)"))
-        
+
     df = pd.DataFrame(columns=["size_in_bytes", "bw_mb_per_sec"])
 
     window_size = 64
@@ -71,18 +76,18 @@ def osu_bw(args):
             bw = float(size / 1e6 * options.iterations * window_size)
             time_elapsed = float(toc - tic)
             logger.info("%-10d%18.2f" % (size, bw / time_elapsed))
-            df = df.append({"size_in_bytes" : int(size), "bw_mb_per_sec":bw}, ignore_index=True)
-    
-                    
-    # Persist result to CSV file      
-    df.to_csv(f"osu_bandwidth-{world_size}.csv", index=False)
+            df = df.append(
+                {"size_in_bytes": int(size), "bw_mb_per_sec": bw}, ignore_index=True
+            )
 
+    # Persist result to CSV file
+    df.to_csv(f"osu_bandwidth-{world_size}.csv", index=False)
 
 
 def main():
     args = get_parser().parse_args()
     device = args.device
-    
+
     log_handlers = setup_loggers(__name__)
     log_level = logging.DEBUG
     logging.basicConfig(
@@ -93,10 +98,9 @@ def main():
 
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
-    world_size = int(os.environ["WORLD_SIZE"])
 
     # Initialize torch.distributed
-    backend = dist_init(device, rank, world_size)
+    backend = dist_init(device, rank)
     if rank == 0:
         log_env_info(device, backend)
 

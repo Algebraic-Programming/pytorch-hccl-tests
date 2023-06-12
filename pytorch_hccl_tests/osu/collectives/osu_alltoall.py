@@ -19,7 +19,6 @@ def osu_alltoall(args):
     world_size = dist.get_world_size()
     dtype = torch.float32
     device = get_device(rank)
-    pg = None
 
     options = Options("Alltoall", args)
     Utils.check_numprocs(world_size, rank, limit=3)
@@ -51,10 +50,9 @@ def main():
 
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
-    world_size = int(os.environ["WORLD_SIZE"])
 
     # Initialize torch.distributed
-    backend = dist_init(device, rank, world_size)
+    backend = dist_init(device, rank)
     if rank == 0:
         log_env_info(device, backend)
 
