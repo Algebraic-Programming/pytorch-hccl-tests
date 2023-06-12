@@ -26,7 +26,7 @@ torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_float.py --d
 or
 
 ```bash
-make torchrun
+make benchmarks
 ```
 
 

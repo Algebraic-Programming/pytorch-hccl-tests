@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 from time import perf_counter as now
@@ -5,13 +6,15 @@ from time import perf_counter as now
 import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, get_device, wait_all
+from pytorch_hccl_tests.commons import dist_init, get_device, log_env_info, setup_loggers
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 from pytorch_hccl_tests.osu.parser import get_parser
 
+logger = logging.getLogger(__name__)
 
-def osu_bw(args):
+
+def osu_multi_lat(args):
     rank = dist.get_rank()
     numprocs = dist.get_world_size()
     pairs = int(numprocs / 2)
@@ -57,6 +60,14 @@ def osu_bw(args):
 def main():
     args = get_parser().parse_args()
     device = args.device
+    
+    log_handlers = setup_loggers(__name__)
+    log_level = logging.DEBUG
+    logging.basicConfig(
+        level=log_level,
+        format="[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s",
+        handlers=log_handlers,
+    )
 
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
@@ -65,12 +76,10 @@ def main():
     # Initialize torch.distributed
     backend = dist_init(device, rank, world_size)
     if rank == 0:
-        print(f"using device {device} with {backend} backend")
-        print(f"world size is {world_size}")
+        log_env_info(device, backend)
 
-    osu_bw(args=args)
+    osu_multi_lat(args=args)
 
-    # Stop process group
     dist.destroy_process_group()
 
 

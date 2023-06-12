@@ -15,6 +15,7 @@ requirements = [
     "torch==1.11.0+cpu",
     "torchvision==0.12.0+cpu",
     "pydot==1.4.2",
+    "pandas==1.3.5",
 ]
 
 test_requirements = [

@@ -1,6 +1,9 @@
 import logging
+import sys
 import time
 from typing import Any, List
+import platform
+    
 
 import torch
 import torch.distributed as dist
@@ -86,3 +89,21 @@ def print_root(vec_size: int, latency: float, bw: float):
     rank = dist.get_rank()
     if rank == 0:
         print(f"(Rank {rank}) {vec_size * 4}   {latency:.3f}  {bw:.6f}")
+
+def setup_loggers(filename: str) -> List[Any]:
+    file_handler = logging.FileHandler(filename=f"{filename}.log")
+    stdout_handler = logging.StreamHandler(stream=sys.stdout)
+    return [file_handler, stdout_handler]
+
+
+def log_env_info(device, backend):
+    world_size = dist.get_world_size()
+    logger.info(f"Python version: {platform.python_version()}")
+    logger.info(f"PyTorch version: {torch.__version__}")
+    logger.info(f"PyTorch MPI enabled?: {torch.distributed.is_mpi_available()}")
+    logger.info(f"PyTorch CUDA enabled?: {torch.cuda.is_available()}")
+    logger.info(f"PyTorch NCCL enabled?: {torch.distributed.is_nccl_available()}")
+    logger.info(f"PyTorch Gloo enabled?: {torch.distributed.is_gloo_available()}")
+    logger.info(f"Using device *{device}* with *{backend}* backend")
+    logger.info(f"World size: {world_size}")
+    

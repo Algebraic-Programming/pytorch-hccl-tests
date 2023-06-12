@@ -1,6 +1,7 @@
 import os
 import sys
 from time import perf_counter as now
+import logging
 
 import torch
 import torch.distributed as dist
@@ -9,6 +10,8 @@ from pytorch_hccl_tests.commons import dist_init, get_device
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 from pytorch_hccl_tests.osu.parser import get_parser
+
+logger = logging.getLogger(__name__)
 
 
 def osu_allgatherv(args):
@@ -37,8 +40,8 @@ def main():
     # Initialize torch.distributed
     backend = dist_init(device, rank, world_size)
     if rank == 0:
-        print(f"using device {device} with {backend} backend")
-        print(f"world size is {world_size}")
+        logger.info(f"using device {device} with {backend} backend")
+        logger.info(f"world size is {world_size}")
 
     osu_allgatherv(args=args)
 

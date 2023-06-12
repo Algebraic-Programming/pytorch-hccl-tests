@@ -11,17 +11,15 @@ copyright file COPYRIGHT in the top level OMB directory.
 
 import math
 import time
+import logging
 
 import torch
 import torch.distributed as dist
 
+logger = logging.getLogger(__name__)
+
 
 class Utils:
-    def print_stats(t_end, t_start, iterations, rank, numprocs, size):
-        avglatency = Utils.avg_lat(t_end, t_start, iterations, numprocs)
-        if rank == 0:
-            print("%-10d%18.2f" % (size, avglatency), flush=True)
-
     def avg_lat(t_end, t_start, iterations, num_procs):
         avg_latency = torch.tensor(
             (t_end - t_start) * 1e6 / float(iterations), dtype=torch.float64
@@ -32,8 +30,8 @@ class Utils:
 
     def print_header(benchmark, rank: int):
         if rank == 0:
-            print("# OMB Python MPI %s Test" % (benchmark))
-            print("# %-8s%18s" % ("Size (B)", "Latency (us)"))
+            logger.info("# OMB Python MPI %s Test" % (benchmark))
+            logger.info("# %-8s%18s" % ("Size (B)", "Latency (us)"))
 
     def check_numprocs(numprocs: int, rank: int, limit: int):
         if limit == 2:
