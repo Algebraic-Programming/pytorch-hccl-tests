@@ -1,12 +1,8 @@
 import argparse
 import os
 import sys
-import time
 
-import torch
-import torch.distributed as dist
-
-from pytorch_hccl_tests.commons import dist_init, bench_allreduce, print_root
+from pytorch_hccl_tests.commons import bench_allreduce, dist_init, print_root
 
 parser = argparse.ArgumentParser()
 
@@ -33,27 +29,6 @@ parser.add_argument(
 )
 
 
-def bench_allreduce(
-    vector_size, repeat: int, device, use_int=False, pause=0.05
-) -> float:
-    time_total = 0  # in us
-    for _ in range(repeat):
-        if use_int:
-            x = torch.randint(10, (vector_size,)).to(device)
-        else:
-            x = torch.rand(vector_size).to(device)
-
-        start = time.monotonic_ns()
-        dist.all_reduce(x, op=dist.ReduceOp.SUM, async_op=False)
-        end = time.monotonic_ns()
-        time_once = (end - start) / 1e3
-        time_total += time_once
-
-        time.sleep(pause)
-
-    return time_total / repeat
-
-
 def main():
     args = parser.parse_args()
     device = args.device
@@ -61,8 +36,7 @@ def main():
     max_power = args.max_power
 
     rank = int(os.environ["LOCAL_RANK"])  # set by `torchrun`
-    world_size = int(os.environ["WORLD_SIZE"])
-    dist_init(device, rank, world_size)
+    dist_init(device, rank)
 
     if rank == 0:
         print("=" * 20)
