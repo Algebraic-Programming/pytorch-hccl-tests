@@ -12,8 +12,6 @@ with open("HISTORY.rst") as history_file:
 
 requirements = [
     "Click>=7.0",
-    "torch==1.11.0+cpu",
-    "torchvision==0.12.0+cpu",
     "pydot==1.4.2",
     "pandas==1.3.5",
 ]
@@ -32,14 +30,14 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
-    description="E2E HCCL PyTorch tests",
+    description="End-to-end PyTorch distributed benchamrks (HCCL backend)",
     entry_points={
         "console_scripts": [
-            "pytorch_hccl_tests=pytorch_hccl_tests.cli:main",
+            "torch-hccl-benchs=pytorch_hccl_tests.cli:main",
         ],
     },
     install_requires=requirements,
