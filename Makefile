@@ -85,29 +85,40 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean ## install the package to the active Python's site-packages
-	pip install . -f https://download.pytorch.org/whl/torch_stable.html
+install-npu-x86: clean
+	wget https://gitee.com/ascend/pytorch/releases/download/v5.0.rc1-pytorch1.11.0/torch_npu-1.11.0-cp37-cp37m-linux_x86_64.whl
+	pip install torch_npu-1.11*.whl
+	pip install .
 
-# You can override the env variables. Exampe make latency -e DEVICE=npu
+install-npu-aarch64: clean
+	wget https://repo.huaweicloud.com/kunpeng/archive/Ascend/PyTorch/torch-1.11.0-cp37-cp37m-linux_aarch64.whl
+	wget https://gitee.com/ascend/pytorch/releases/download/v5.0.rc1-pytorch1.11.0/torch_npu-1.11.0-cp37-cp37m-linux_aarch64.whl
+	pip install torch-1.11*.whl torch_npu-1.11*.whl
+	pip install .
+
+install: clean ## install the package to the active Python's site-packages
+	pip install torch==1.11.0+cpu torchvision==0.12.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+	pip install .
+
+# You can override the env variables. Example `make latency -e DEVICE=npu`
 DEVICE = cpu
 WORLD_SIZE = 4
 OMP_NUM_THREADS = 1
 
 hello: ## OSU MPI/HCCL hello init benchmark
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/startup/osu_hello.py --device ${DEVICE}
-
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark hello --device ${DEVICE}
 
 latency: ## OSU MPI/HCCL latency benchmark
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark latency --device ${DEVICE}
 
 multi-latency: ## OSU MPI/HCCL multi-latency benchmark
-	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/p2p/osu_multi_lat.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark multi-latency --device ${DEVICE}
 
 bandwidth: ## OSU MPI/HCCL bandwidth benchmark
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark bandwidth --device ${DEVICE}
 
 bidirectional-bw: ## OSU MPI/HCCL bidirectional bandwidth benchmark
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bibw.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark bibw --device ${DEVICE}
 
 allreduce: ## OSU MPI/HCCL allreduce benchmark
 	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device ${DEVICE}
