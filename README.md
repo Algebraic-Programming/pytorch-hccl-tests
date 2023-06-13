@@ -1,7 +1,11 @@
 # pytorch-hccl-tests
 
-HCCL tests based on the PyTorch/Ascend adapter.
+HCCL benchamarks based on the PyTorch/Ascend adapter. The benchmarks contain the benchmarks proposed in the article [OMB-Py: Python Micro-Benchmarks for Evaluating Performance of MPI Libraries on HPC Systems](https://arxiv.org/pdf/2110.10659.pdf).
 
+
+Currently, only the P2P benchmarks are ported and tested.
+
+### Development
 
 ```bash
 python -m venv venv
@@ -11,133 +15,82 @@ make install
 ```
 
 
-### All-reduce benchmark (CPU)
+### Benchmark suites
+
+The following benchmarks are available. To view the list of available benchmarks, type `make`
+
+
+```
+> make
+...
+<development related Make commands>
+...
+latency              OSU MPI/HCCL latency benchmark
+bandwidth            OSU MPI/HCCL bandwidth benchmark
+bidirectional-bw     OSU MPI/HCCL bidirectional bandwidth benchmark
+allreduce            OSU MPI/HCCL allreduce benchmark
+allgather            OSU MPI/HCCL allgather benchmark
+alltoall             OSU MPI/HCCL alltoall benchmark
+barrier              OSU MPI/HCCL barrier benchmark
+broadcast            OSU MPI/HCCL broadcast benchmark
+gather               OSU MPI/HCCL Bandwidth benchmark
+reduce               OSU MPI/HCCL Bandwidth benchmark
+scatter              OSU MPI/HCCL Bandwidth benchmark
+collectives          OSU MPI/HCCL collective communications benchmark suite
+benchmarks           OSU MPI/HCCL complete benchmark suite
+```
+
+
+#### Example benchmark: Latency
 
 ```bash
+make latency -e DEVICE=npu (default: cpu)
+```
+
+should output
+
+```bash
+> make latency
 export OMP_NUM_THREADS=1
-
-# Integer tensors
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_int.py --device cpu
-
-# Float tensors
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_float.py --device cpu
+torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device cpu
+WARNING:torch.distributed.run:
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+[2023-06-13 09:16:21,299] {distributed_c10d.py:228} INFO - Added key: store_based_barrier_key:1 to store for rank: 1
+[2023-06-13 09:16:21,299] {distributed_c10d.py:228} INFO - Added key: store_based_barrier_key:1 to store for rank: 0
+[2023-06-13 09:16:21,299] {distributed_c10d.py:263} INFO - Rank 1: Completed store-based barrier for key:store_based_barrier_key:1 with 2 nodes.
+[2023-06-13 09:16:21,299] {distributed_c10d.py:263} INFO - Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 2 nodes.
+[2023-06-13 09:16:21,300] {commons.py:102} INFO - Python version: 3.7.10
+[2023-06-13 09:16:21,300] {commons.py:103} INFO - PyTorch version: 1.11.0+cpu
+[2023-06-13 09:16:21,300] {commons.py:104} INFO - PyTorch MPI enabled?: False
+[2023-06-13 09:16:21,300] {commons.py:105} INFO - PyTorch CUDA enabled?: False
+[2023-06-13 09:16:21,301] {commons.py:106} INFO - PyTorch NCCL enabled?: False
+[2023-06-13 09:16:21,301] {commons.py:107} INFO - PyTorch Gloo enabled?: True
+[2023-06-13 09:16:21,301] {commons.py:108} INFO - Using device *cpu* with *gloo* backend
+[2023-06-13 09:16:21,301] {commons.py:109} INFO - World size: 2
+[2023-06-13 09:16:21,301] {osu_util_mpi.py:32} INFO - # OMB Python MPI Latency Test
+[2023-06-13 09:16:21,302] {osu_util_mpi.py:33} INFO - # Size (B)      Latency (us)
+[2023-06-13 09:16:21,773] {osu_latency.py:64} INFO - 1024                   21.39
+[2023-06-13 09:16:22,272] {osu_latency.py:64} INFO - 2048                   22.63
+[2023-06-13 09:16:22,754] {osu_latency.py:64} INFO - 4096                   21.49
+[2023-06-13 09:16:23,274] {osu_latency.py:64} INFO - 8192                   23.53
+[2023-06-13 09:16:23,282] {osu_latency.py:64} INFO - 16384                  28.48
+[2023-06-13 09:16:23,291] {osu_latency.py:64} INFO - 32768                  38.55
+[2023-06-13 09:16:23,306] {osu_latency.py:64} INFO - 65536                  59.47
+[2023-06-13 09:16:23,330] {osu_latency.py:64} INFO - 131072                 99.48
+[2023-06-13 09:16:23,374] {osu_latency.py:64} INFO - 262144                183.47
+[2023-06-13 09:16:23,457] {osu_latency.py:64} INFO - 524288                350.05
+[2023-06-13 09:16:23,620] {osu_latency.py:64} INFO - 1048576               682.47
+[2023-06-13 09:16:23,943] {osu_latency.py:64} INFO - 2097152              1370.95
+[2023-06-13 09:16:24,606] {osu_latency.py:64} INFO - 4194304              2779.32
+[2023-06-13 09:16:25,874] {osu_latency.py:64} INFO - 8388608              5424.14
+[2023-06-13 09:16:28,245] {osu_latency.py:64} INFO - 16777216            10074.96
+[2023-06-13 09:16:33,184] {osu_latency.py:64} INFO - 33554432            21090.99
 ```
 
-or
+The above data are also persistent into a CSV file named `osu_latency_2.csv`.
 
-```bash
-make benchmarks
-```
-
-
-## Port of OMB-Py MPI benchmarks to Pytorch distributed
-
-The `osu` module contains a list OSU MPI benchmarks that were ported to mpi4py in the article [OMB-Py: Python Micro-Benchmarks for Evaluating
-Performance of MPI Libraries on HPC Systems](https://arxiv.org/pdf/2110.10659.pdf).
-
-Currently, only the P2P benchmarks are ported.
-
-#### Latency
-
-```bash
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --iterations 1000
-```
-
-should output
-
-```bash
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --iterations 1000
-using device cpu with gloo backend
-world size is 2
-# OMB Python MPI Latency Test
-# Size (B)      Latency (us)
-1024                   21.92
-2048                   21.01
-4096                   22.18
-8192                   24.91
-16384                  32.30
-32768                  33.46
-65536                  50.41
-131072                 79.20
-262144                142.70
-524288                305.87
-1048576               840.64
-2097152              1438.03
-4194304              2668.22
-8388608              5067.97
-16777216            10204.80
-33554432            20518.96
-```
-
-
-#### Bandwidth
-
-```bash
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --iterations 1000
-```
-should output
-
-```bash
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --iterations 1000
-using device cpu with gloo backend
-world size is 2
-# OMB-Py MPI Bandwidth Test
-# Size (B)  Bandwidth (MB/s)
-1024                   82.20
-2048                  162.13
-4096                  287.45
-8192                  515.59
-16384                 689.20
-32768                 997.42
-65536                1212.27
-131072               1349.57
-262144               1460.63
-524288               1542.24
-1048576              1604.63
-2097152              1633.82
-4194304              1637.85
-8388608              1723.22
-16777216             1628.28
-```
-
-
-#### Multi-latency
-
-
-```bash
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_multi_lat.py          
-```
-
-should output
-
-```bash
-torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_multi_lat.py          
-using device cpu with gloo backend
-world size is 2
-# OMB Python MPI Multi Latency Test
-# Size (B)      Latency (us)
-1024                   20.62
-2048                   21.44
-4096                   22.97
-8192                   24.88
-16384                  31.59
-32768                  36.09
-65536                  51.34
-131072                 83.94
-262144                160.86
-524288                315.55
-1048576               663.96
-2097152              1304.58
-4194304              2692.07
-8388608              5379.78
-16777216            10915.15
-33554432            20868.44
-```
-
-#### Bidirectional bandwidth
-
-This benchmark currently deadlocks on CPU/Gloo backend due a known Gloo bug, see https://github.com/pytorch/pytorch/issues/30723
-
-## Known issues
+### Known issues
 
 * Gloo backend does not support `reduce_scatter`.

@@ -88,85 +88,78 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	pip install . -f https://download.pytorch.org/whl/torch_stable.html
 
-latency:
-	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device cpu
 
-bandwidth:
-	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --device cpu
+DEVICE = cpu
 
-bidirectional-bw:
+latency: ## OSU MPI/HCCL latency benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bibw.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device ${DEVICE}
 
-allreduce:
+multi-latency: ## OSU MPI/HCCL multi-latency benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/p2p/osu_multi_lat.py --device ${DEVICE}
 
-allgather:
+
+bandwidth: ## OSU MPI/HCCL bandwidth benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --device ${DEVICE}
 
-alltoall:
+bidirectional-bw: ## OSU MPI/HCCL bidirectional bandwidth benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bibw.py --device ${DEVICE}
 
-barrier:
+allreduce: ## OSU MPI/HCCL allreduce benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device ${DEVICE}
 
-broadcast:
+allgather: ## OSU MPI/HCCL allgather benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device ${DEVICE}
 
-gather:
+alltoall: ## OSU MPI/HCCL alltoall benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_gather.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device ${DEVICE}
 
-reduce:
+barrier: ## OSU MPI/HCCL barrier benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_reduce.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device ${DEVICE}
 
-scatter:
+broadcast: ## OSU MPI/HCCL broadcast benchmark
 	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_scatter.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device ${DEVICE}
 
-p2p:
+gather: ## OSU MPI/HCCL Bandwidth benchmark
+	export OMP_NUM_THREADS=1
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_gather.py --device ${DEVICE}
+
+reduce: ## OSU MPI/HCCL Bandwidth benchmark
+	export OMP_NUM_THREADS=1
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_reduce.py --device ${DEVICE}
+
+scatter: ## OSU MPI/HCCL Bandwidth benchmark
+	export OMP_NUM_THREADS=1
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_scatter.py --device ${DEVICE}
+
+p2p: ## OSU MPI/HCCL point-to-point benchmark suite
 	@export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bibw.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_multi_lat.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_int.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_float.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bibw.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_multi_lat.py --device ${DEVICE}
 
-collectives:
+collectives: ## OSU MPI/HCCL collective communications benchmark suite
 	@export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_gather.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_reduce.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_scatter.py --device cpu
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_gather.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_reduce.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_scatter.py --device ${DEVICE}
 	
 
-benchmarks:
-	export OMP_NUM_THREADS=1
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_bw.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_multi_lat.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_allgather.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_gather.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 4 pytorch_hccl_tests/osu/collectives/osu_reduce.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_scatter.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_int.py --device cpu
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_float.py --device cpu
+benchmarks: p2p collectives ## OSU MPI/HCCL complete benchmark suite
+	
