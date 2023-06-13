@@ -61,6 +61,7 @@ def osu_bibw(args):
                     recv_requests[j] = dist.irecv(r_msg, 1, pg, 10)
                 for j in window_sizes:
                     send_requests[j] = dist.isend(s_msg, 1, pg, 100)
+
                 wait_all(send_requests)
                 wait_all(recv_requests)
             toc = now()
@@ -70,12 +71,12 @@ def osu_bibw(args):
                     recv_requests[j] = dist.irecv(r_msg, 0, pg, 100)
                 for j in window_sizes:
                     send_requests[j] = dist.isend(s_msg, 0, pg, 10)
-                    wait_all(send_requests)
-                    wait_all(recv_requests)
+                wait_all(recv_requests)
+                wait_all(send_requests)
 
         if rank == 0:
             bw = size / 1e6 * options.iterations * window_size * 2
-            time_elapsed = tic - toc
+            time_elapsed = toc - tic
             logger.info("%-10d%18.2f" % (size, bw / time_elapsed))
             df = df.append(
                 {"size_in_bytes": int(size), "bw_mb_per_sec": bw}, ignore_index=True
