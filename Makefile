@@ -121,7 +121,7 @@ bidirectional-bw: ## OSU MPI/HCCL bidirectional bandwidth benchmark
 	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark bibw --device ${DEVICE}
 
 allreduce: ## OSU MPI/HCCL allreduce benchmark
-	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_allreduce.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark allreduce --device ${DEVICE}
 
 allgather: ## OSU MPI/HCCL allgather benchmark
 	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_allgather.py --device ${DEVICE}
