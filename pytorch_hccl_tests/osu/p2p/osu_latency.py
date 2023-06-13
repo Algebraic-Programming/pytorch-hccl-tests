@@ -62,4 +62,4 @@ def osu_latency(args):
             )
 
     # Persist result to CSV file
-    df.to_csv(f"osu_latency-{world_size}.csv", index=False)
+    df.to_csv(f"osu_latency-{device}-{world_size}.csv", index=False)

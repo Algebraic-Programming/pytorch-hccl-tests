@@ -62,5 +62,5 @@ def osu_multi_lat(args):
                 ignore_index=True,
             )
 
-        # Persist result to CSV file
-        df.to_csv(f"osu_multi_latency-{world_size}.csv", index=False)
+    # Persist result to CSV file
+    df.to_csv(f"osu_multi_latency-{device}-{world_size}.csv", index=False)

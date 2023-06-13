@@ -76,4 +76,4 @@ def osu_bibw(args):
                 {"size_in_bytes": int(size), "bw_mb_per_sec": bw}, ignore_index=True
             )
 
-    df.to_csv("osu_bibw-{world_size}.csv", index=False)
+    df.to_csv(f"osu_bibw-{device}-{world_size}.csv", index=False)

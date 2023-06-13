@@ -75,4 +75,4 @@ def osu_bw(args):
             )
 
     # Persist result to CSV file
-    df.to_csv(f"osu_bandwidth-{world_size}.csv", index=False)
+    df.to_csv(f"osu_bandwidth-{device}-{world_size}.csv", index=False)
