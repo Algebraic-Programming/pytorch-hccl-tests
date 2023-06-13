@@ -1,6 +1,4 @@
 import logging
-import os
-import sys
 from time import perf_counter as now
 
 import pandas as pd
@@ -8,15 +6,11 @@ import torch
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
-    dist_init,
     get_device,
-    log_env_info,
-    setup_loggers,
     wait_all,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
-from pytorch_hccl_tests.osu.parser import get_parser
 
 logger = logging.getLogger(__name__)
 
@@ -82,32 +76,3 @@ def osu_bw(args):
 
     # Persist result to CSV file
     df.to_csv(f"osu_bandwidth-{world_size}.csv", index=False)
-
-
-def main():
-    args = get_parser().parse_args()
-    device = args.device
-
-    log_handlers = setup_loggers(__name__)
-    log_level = logging.DEBUG
-    logging.basicConfig(
-        level=log_level,
-        format="[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s",
-        handlers=log_handlers,
-    )
-
-    # rank and world_size is set by torchrun
-    rank = int(os.environ["LOCAL_RANK"])
-
-    # Initialize torch.distributed
-    backend = dist_init(device, rank)
-    if rank == 0:
-        log_env_info(device, backend)
-
-    osu_bw(args=args)
-
-    dist.destroy_process_group()
-
-
-if __name__ == "__main__":
-    sys.exit(main())  # noqa
