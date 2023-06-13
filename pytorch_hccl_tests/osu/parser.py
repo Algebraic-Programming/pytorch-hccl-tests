@@ -16,7 +16,9 @@ def get_parser():
         description="OMB-Py Script",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("--benchmark", type=str, help="Name of benchmark to run")
+    parser.add_argument(
+        "--benchmark", type=str, help="Name of benchmark to run", default="latency"
+    )
     parser.add_argument(
         "--device",
         default="cpu",
