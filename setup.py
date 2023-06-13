@@ -51,7 +51,7 @@ setup(
     packages=find_packages(include=["pytorch_hccl_tests", "pytorch_hccl_tests.*"]),
     test_suite="tests",
     tests_require=test_requirements,
-    url="https://github.com/zouzias/pytorch_hccl_tests",
+    url="https://github.com/Algebraic-Programming/pytorch-hccl-tests",
     version="0.1.0",
     zip_safe=False,
 )
