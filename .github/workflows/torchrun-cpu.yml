@@ -39,4 +39,4 @@ jobs:
         run: torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_int.py --device cpu
 
       - name: Run latency benchmark (CPU)
-        run: torchrun --nnodes 1 --nproc_per_node 2 torch-hccl-benchs --benchmark latency --device cpu
+        run: torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark latency --device cpu
