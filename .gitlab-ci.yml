@@ -29,6 +29,14 @@ pypackage-install-test:
     script:
         - make install
 
+unit_test_latency_cpu:
+    tags:
+        - docker
+    stage: Testing
+    script:
+        - make install
+        - make latency
+
 unit_test_python_3_8:
     tags:
         - docker
