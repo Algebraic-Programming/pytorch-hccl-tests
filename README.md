@@ -3,7 +3,7 @@
 HCCL benchamarks based on the PyTorch/Ascend adapter. The benchmarks contain the benchmarks proposed in the article [OMB-Py: Python Micro-Benchmarks for Evaluating Performance of MPI Libraries on HPC Systems](https://arxiv.org/pdf/2110.10659.pdf).
 
 
-Currently, only the P2P benchmarks are ported and tested. Additionally, `allreduce` and `broadcast` collectives are supported.
+Currently, only the P2P benchmarks are ported and tested. Additionally, `allreduce`, `alltoall` and `broadcast` collectives are supported.
 
 ### Development
 
