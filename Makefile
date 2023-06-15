@@ -133,7 +133,7 @@ barrier: ## OSU MPI/HCCL barrier benchmark
 	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device ${DEVICE}
 
 broadcast: ## OSU MPI/HCCL broadcast benchmark
-	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark broadcast --device ${DEVICE}
 
 gather: ## OSU MPI/HCCL Bandwidth benchmark
 	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_gather.py --device ${DEVICE}
