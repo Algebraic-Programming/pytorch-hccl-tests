@@ -85,12 +85,17 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-install-npu-x86: clean
+
+install-cuda: ## Install package for CUDA backend testing
+	pip install torch==1.13.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
+	pip install .
+
+install-npu-x86: clean ## Install package for Ascend backend testing (x86)
 	wget https://gitee.com/ascend/pytorch/releases/download/v5.0.rc1-pytorch1.11.0/torch_npu-1.11.0-cp37-cp37m-linux_x86_64.whl
 	pip install torch_npu-1.11*.whl
 	pip install .
 
-install-npu-aarch64: clean
+install-npu-aarch64: clean ## Install package for CUDA backend testing (aarch64)
 	wget https://repo.huaweicloud.com/kunpeng/archive/Ascend/PyTorch/torch-1.11.0-cp37-cp37m-linux_aarch64.whl
 	wget https://gitee.com/ascend/pytorch/releases/download/v5.0.rc1-pytorch1.11.0/torch_npu-1.11.0-cp37-cp37m-linux_aarch64.whl
 	pip install torch-1.11*.whl torch_npu-1.11*.whl

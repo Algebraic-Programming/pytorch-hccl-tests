@@ -5,7 +5,7 @@ import logging
 
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, log_env_info
+from pytorch_hccl_tests.commons import dist_init, log_env_info, get_device
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 from pytorch_hccl_tests.osu.parser import get_parser
@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 def osu_barrier(args):
     rank = dist.get_rank()
     world_size = dist.get_world_size()
+    device = get_device(rank)
 
     options = Options("Barrier", args)
     Utils.check_numprocs(world_size, rank, limit=3)
@@ -31,7 +32,7 @@ def osu_barrier(args):
     toc = now()
     dist.barrier()
 
-    avg_lat = Utils.avg_lat(toc, tic, options.iterations, world_size)
+    avg_lat = Utils.avg_lat(toc, tic, options.iterations, world_size, device)
     if rank == 0:
         print("%-10d%18.2f" % (0, avg_lat))
 
