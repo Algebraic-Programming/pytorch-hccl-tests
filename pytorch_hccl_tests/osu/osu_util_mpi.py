@@ -19,13 +19,13 @@ logger = logging.getLogger(__name__)
 
 
 class Utils:
-    def avg_lat(t_end, t_start, iterations, num_procs):
+    def avg_lat(t_end, t_start, iterations, num_procs, device: torch.device):
         avg_latency = torch.tensor(
             (t_end - t_start) * 1e6 / float(iterations), dtype=torch.float64
-        )
+        ).to(device)
         dist.reduce(avg_latency, 0, op=dist.ReduceOp.SUM)
         avg_latency /= float(num_procs)
-        return avg_latency
+        return avg_latency.item()
 
     def print_header(benchmark, rank: int):
         if rank == 0:

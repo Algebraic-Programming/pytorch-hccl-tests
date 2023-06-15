@@ -53,12 +53,14 @@ def osu_multi_lat(args):
                 dist.send(s_msg, partner, pg, 1)
             toc = now()
 
-        avg_latency = Utils.avg_lat(toc, tic, 2 * options.iterations, world_size)
+        avg_latency = Utils.avg_lat(
+            toc, tic, 2 * options.iterations, world_size, device
+        )
 
         if rank == 0:
             logger.info("%-10d%18.2f" % (size, avg_latency))
             df = df.append(
-                {"size_in_bytes": int(size), "avg_latency": avg_latency.item()},
+                {"size_in_bytes": int(size), "avg_latency": avg_latency},
                 ignore_index=True,
             )
 
