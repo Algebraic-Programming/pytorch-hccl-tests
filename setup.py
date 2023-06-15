@@ -12,7 +12,6 @@ with open("HISTORY.rst") as history_file:
 
 requirements = [
     "Click>=7.0",
-    "pydot==1.4.2",
     "pandas==1.3.5",
 ]
 

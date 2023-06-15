@@ -7,7 +7,11 @@ import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import dist_init, log_env_info, setup_loggers
 from pytorch_hccl_tests.osu.p2p import osu_bibw, osu_bw, osu_latency, osu_multi_lat
-from pytorch_hccl_tests.osu.collectives import osu_allreduce
+from pytorch_hccl_tests.osu.collectives import (
+    osu_allreduce,
+    osu_broadcast,
+    osu_alltoall,
+)
 from pytorch_hccl_tests.osu.parser import get_parser
 from pytorch_hccl_tests.osu.startup import osu_hello
 
@@ -23,6 +27,8 @@ def select_bench(args):
         "bibw": osu_bibw,
         "multi-latency": osu_multi_lat,
         "allreduce": osu_allreduce,
+        "broadcast": osu_broadcast,
+        "alltoall": osu_alltoall,
     }
     if bench in switcher:
         switcher[bench](args)

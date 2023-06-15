@@ -105,5 +105,18 @@ def log_env_info(device, backend):
     logger.info(f"PyTorch CUDA enabled?: {torch.cuda.is_available()}")
     logger.info(f"PyTorch NCCL enabled?: {torch.distributed.is_nccl_available()}")
     logger.info(f"PyTorch Gloo enabled?: {torch.distributed.is_gloo_available()}")
+    try:
+        import torch_npu  # noqa
+
+        logger.info(f"PyTorch HCCL enabled?: {torch.distributed.is_hccl_available()}")
+        logger.info(f"PyTorch Ascend Adapter (NPU) version: {torch_npu.__version__}")
+    except Exception:
+        logger.warning("*" * 80)
+        logger.warning("* PyTorch Ascend (NPU) is NOT installed.")
+        logger.warning(
+            "* You must install PyTorch Ascend Adaptor from https://gitee.com/ascend/pytorch. *"
+        )
+        logger.warning("*" * 80)
+
     logger.info(f"Using device *{device}* with *{backend}* backend")
     logger.info(f"World size: {world_size}")

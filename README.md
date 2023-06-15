@@ -3,7 +3,7 @@
 HCCL benchamarks based on the PyTorch/Ascend adapter. The benchmarks contain the benchmarks proposed in the article [OMB-Py: Python Micro-Benchmarks for Evaluating Performance of MPI Libraries on HPC Systems](https://arxiv.org/pdf/2110.10659.pdf).
 
 
-Currently, only the P2P benchmarks are ported and tested.
+Currently, only the P2P benchmarks are ported and tested. Additionally, `allreduce`, `alltoall` and `broadcast` collectives are supported.
 
 ### Development
 
@@ -50,13 +50,10 @@ make latency -e DEVICE=npu (default: cpu)
 should output
 
 ```bash
+> export OMP_NUM_THREADS=1
 > make latency
-export OMP_NUM_THREADS=1
 torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/p2p/osu_latency.py --device cpu
 WARNING:torch.distributed.run:
-*****************************************
-Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-*****************************************
 [2023-06-13 09:16:21,299] {distributed_c10d.py:228} INFO - Added key: store_based_barrier_key:1 to store for rank: 1
 [2023-06-13 09:16:21,299] {distributed_c10d.py:228} INFO - Added key: store_based_barrier_key:1 to store for rank: 0
 [2023-06-13 09:16:21,299] {distributed_c10d.py:263} INFO - Rank 1: Completed store-based barrier for key:store_based_barrier_key:1 with 2 nodes.

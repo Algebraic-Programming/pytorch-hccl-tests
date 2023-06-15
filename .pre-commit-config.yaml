@@ -19,7 +19,7 @@ repos:
       - id: black
         language_version: python3.8 # Should be a command that runs python3.8+
   - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+    rev: 5.12.0
     hooks:
       - id: isort
         name: isort (python)

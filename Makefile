@@ -127,13 +127,13 @@ allgather: ## OSU MPI/HCCL allgather benchmark
 	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_allgather.py --device ${DEVICE}
 
 alltoall: ## OSU MPI/HCCL alltoall benchmark
-	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_alltoall.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark alltoall --device ${DEVICE}
 
 barrier: ## OSU MPI/HCCL barrier benchmark
 	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_barrier.py --device ${DEVICE}
 
 broadcast: ## OSU MPI/HCCL broadcast benchmark
-	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_broadcast.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark broadcast --device ${DEVICE}
 
 gather: ## OSU MPI/HCCL Bandwidth benchmark
 	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_gather.py --device ${DEVICE}
