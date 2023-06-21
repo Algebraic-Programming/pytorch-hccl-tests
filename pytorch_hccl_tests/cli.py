@@ -40,16 +40,16 @@ def select_bench(args):
 
 
 def main():  # noqa
-    log_handlers = setup_loggers(__name__)
+    args = get_parser().parse_args()
+    device = args.device
+
+    log_handlers = setup_loggers(args.benchmark)
     log_level = logging.DEBUG
     logging.basicConfig(
         level=log_level,
         format="[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s",
         handlers=log_handlers,
     )
-
-    args = get_parser().parse_args()
-    device = args.device
 
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
