@@ -17,10 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 def osu_reduce_scatter(args):
+    backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
     dtype = torch.float32
-    device = get_device(rank)
+    device = get_device(backend, rank)
     pg = None
 
     options = Options("Reduce_scatter", args)

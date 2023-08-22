@@ -14,9 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 def osu_barrier(args):
+    backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    device = get_device(rank)
+    device = get_device(backend, rank)
 
     options = Options("Barrier", args)
     Utils.check_numprocs(world_size, rank, limit=3)

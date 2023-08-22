@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def osu_scatterv(args):
+    # backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
 

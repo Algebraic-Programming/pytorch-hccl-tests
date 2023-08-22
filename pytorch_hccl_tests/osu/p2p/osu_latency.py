@@ -15,9 +15,10 @@ logger = logging.getLogger(__name__)
 
 
 def osu_latency(args):
+    backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    device = get_device(rank)
+    device = get_device(backend, rank)
     pg = None
 
     options = Options("Latency", args)
