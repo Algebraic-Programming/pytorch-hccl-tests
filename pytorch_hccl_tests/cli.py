@@ -56,6 +56,7 @@ def main():  # noqa
 
     # Initialize torch.distributed
     backend = dist_init(device, rank)
+    args.backend = backend
     if rank == 0:
         log_env_info(device, backend)
 

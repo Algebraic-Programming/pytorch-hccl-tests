@@ -10,15 +10,17 @@ import torch.distributed as dist
 logger = logging.getLogger(__name__)
 
 
-def get_device(rank: int):
-    "Returns CUDA device with id rank % n_devices. Falls back to CPU device"
-    if torch.cuda.is_available():
+def get_device(backend: str, local_rank: int):
+    "Returns device"
+    if torch.cuda.is_available() and backend in ["nccl", "mpi"]:
         n_devices = torch.cuda.device_count()
-        device_id = rank % n_devices
-        if rank >= n_devices:
-            logger.warning(f"Rank *{rank}* assigned CUDA:{device_id}")
-        torch.cuda.set_device(f"cuda:{device_id}")
-        return torch.device(f"cuda:{device_id}")
+        if local_rank >= n_devices:
+            raise RuntimeError(
+                f"Local rank *{local_rank}* greater than number of CUDA devices {n_devices}"
+            )
+        return torch.device(f"cuda:{local_rank}")
+    elif backend == "hccl":
+        return torch.device(f"npu:{local_rank}")
     else:
         return torch.device("cpu")
 

@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def osu_gatherv(args):
+    # backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
     # dtype = torch.float32

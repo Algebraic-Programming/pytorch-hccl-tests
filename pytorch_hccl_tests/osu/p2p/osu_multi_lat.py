@@ -13,11 +13,12 @@ logger = logging.getLogger(__name__)
 
 
 def osu_multi_lat(args):
+    backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
     pairs = int(world_size / 2)
     dtype = torch.float32
-    device = get_device(rank)
+    device = get_device(backend, rank)
     pg = None
 
     options = Options("Multi Latency", args)
