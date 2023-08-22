@@ -40,10 +40,14 @@ def select_bench(args):
 
 
 def main():  # noqa
+<<<<<<< HEAD
     args = get_parser().parse_args()
     device = args.device
 
     log_handlers = setup_loggers(args.benchmark)
+=======
+    log_handlers = setup_loggers(__name__)
+>>>>>>> github/master
     log_level = logging.DEBUG
     logging.basicConfig(
         level=log_level,
@@ -51,12 +55,21 @@ def main():  # noqa
         handlers=log_handlers,
     )
 
+<<<<<<< HEAD
+=======
+    args = get_parser().parse_args()
+    device = args.device
+
+>>>>>>> github/master
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
 
     # Initialize torch.distributed
     backend = dist_init(device, rank)
+<<<<<<< HEAD
     args.backend = backend
+=======
+>>>>>>> github/master
     if rank == 0:
         log_env_info(device, backend)
 

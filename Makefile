@@ -85,7 +85,6 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-
 install-cuda: ## Install package for CUDA backend testing
 	pip install torch==1.13.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
 	pip install .
@@ -154,4 +153,3 @@ p2p: latency bandwidth bidirectional-bw multi-latency ## OSU MPI/HCCL point-to-p
 collectives: allreduce allgather alltoall barrier gather reduce scatter ## OSU MPI/HCCL collective communications benchmark suite
 
 benchmarks: p2p collectives ## OSU MPI/HCCL complete benchmark suite
-	
