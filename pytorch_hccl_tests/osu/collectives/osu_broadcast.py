@@ -5,7 +5,7 @@ import pandas as pd
 import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import get_device
+from pytorch_hccl_tests.commons import get_device, get_dtype
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 
@@ -16,7 +16,7 @@ def osu_broadcast(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    dtype = torch.float32
+    dtype = get_dtype(args.dtype)
     device = get_device(backend, rank)
     pg = None
 

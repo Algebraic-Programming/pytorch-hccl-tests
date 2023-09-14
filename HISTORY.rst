@@ -4,7 +4,8 @@ History
 
 0.1.2 (2023-XX-YY)
 ------------------
-* TBD
+* Fix critical bug on setting up the NPU/HCCL environment
+* Introduce `dtype` as an argument parameter
 
 0.1.1 (2023-06-15)
 ------------------

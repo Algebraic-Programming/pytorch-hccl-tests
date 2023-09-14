@@ -16,6 +16,7 @@ def osu_scatterv(args):
     # backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
+    # dtype = get_dtype(args.dtype)
 
     options = Options("Scatterv", args)
     Utils.check_numprocs(world_size, rank, limit=3)

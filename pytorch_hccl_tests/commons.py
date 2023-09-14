@@ -10,6 +10,23 @@ import torch.distributed as dist
 logger = logging.getLogger(__name__)
 
 
+_TORCH_DTYPES = {
+    "int8": torch.int8,
+    "torch.int64": torch.long,
+    "long": torch.long,
+    "float": torch.float32,
+    "float32": torch.float32,
+    "float64": torch.float64,
+    "double": torch.float64,
+}
+
+
+def get_dtype(dtype: str) -> torch.dtype:
+    dtype = _TORCH_DTYPES.get(dtype, "float")
+    logger.debug(f"Set input dtype: {dtype}")
+    return dtype
+
+
 def get_device(backend: str, local_rank: int):
     "Returns device"
     if torch.cuda.is_available() and backend in ["nccl", "mpi"]:

@@ -7,6 +7,7 @@ import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
     get_device,
+    get_dtype,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 def osu_latency(args):
     backend = args.backend
     rank = dist.get_rank()
+    dtype = get_dtype(args.dtype)
     world_size = dist.get_world_size()
     device = get_device(backend, rank)
     pg = None
@@ -34,8 +36,8 @@ def osu_latency(args):
             options.skip = options.skip_large
             options.iterations = options.iterations_large
         iterations = range(options.iterations + options.skip)
-        s_msg = torch.rand(size, dtype=torch.float32).to(device)
-        r_msg = torch.rand(size, dtype=torch.float32).to(device)
+        s_msg = torch.rand(size, dtype=dtype).to(device)
+        r_msg = torch.rand(size, dtype=dtype).to(device)
 
         dist.barrier()
         if rank == 0:

@@ -94,10 +94,10 @@ install-npu-x86: clean ## Install package for Ascend backend testing (x86)
 	pip install torch_npu-1.11.0.post1-cp37-cp37m-linux_x86_64.whl
 	pip install .
 
-install-npu-aarch64: clean ## Install package for CUDA backend testing (aarch64)
+install-npu-arm: clean ## Install packages for Ascend/NPU backend testing (aarch64)
 	wget https://repo.huaweicloud.com/kunpeng/archive/Ascend/PyTorch/torch-1.11.0-cp37-cp37m-linux_aarch64.whl
 	wget https://gitee.com/ascend/pytorch/releases/download/v5.0.rc2-pytorch1.11.0/torch_npu-1.11.0.post1-cp37-cp37m-linux_aarch64.whl
-	pip install torch_npu-1.11.0.post1-cp37-cp37m-linux_aarch64.whl
+	pip install --force-reinstall torch-1.11.0-cp37-cp37m-manylinux2014_aarch64.whl torch_npu-1.11.0.post1-cp37-cp37m-linux_aarch64.whl
 	pip install .
 
 install: clean ## install the package to the active Python's site-packages
@@ -105,12 +105,14 @@ install: clean ## install the package to the active Python's site-packages
 	pip install .
 
 # You can override the env variables. Example `make latency -e DEVICE=npu`
-DEVICE = cpu
 WORLD_SIZE = 4
-OMP_NUM_THREADS = 1
+export DEVICE = cpu
+
+# To surpress a torchrun warning
+export OMP_NUM_THREADS = 1
 
 hello: ## OSU MPI/HCCL hello init benchmark
-	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark hello --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark hello
 
 latency: ## OSU MPI/HCCL latency benchmark
 	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark latency --device ${DEVICE}

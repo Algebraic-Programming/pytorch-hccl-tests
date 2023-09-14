@@ -17,7 +17,7 @@ def osu_gatherv(args):
     # backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    # dtype = torch.float32
+    # dtype = get_dtype(args.dtype)
     # device = get_device(rank)
     # pg = None
 

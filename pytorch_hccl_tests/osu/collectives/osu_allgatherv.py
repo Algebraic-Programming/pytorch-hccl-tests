@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 def osu_allgatherv(args):
     rank = dist.get_rank()
     world_size = dist.get_world_size()
+    # dtype = get_dtype(args.dtype)
 
     options = Options("Allgatherv", args)
     Utils.check_numprocs(world_size, rank, limit=3)

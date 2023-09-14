@@ -9,6 +9,7 @@ copyright file COPYRIGHT in the top level OMB directory.
 """
 
 import argparse
+import os
 
 
 def get_parser():
@@ -21,10 +22,17 @@ def get_parser():
     )
     parser.add_argument(
         "--device",
-        default="cpu",
+        default=os.environ.get("DEVICE", "cpu"),
         choices=["cpu", "npu", "cuda"],
         type=str,
         help="device type",
+    )
+    parser.add_argument(
+        "--dtype",
+        default=os.environ.get("HCCL_DTYPE", "float"),
+        choices=["int", "float", "double"],
+        type=str,
+        help="data type",
     )
     parser.add_argument(
         "--buffer", type=str, default="", help="Buffer type to be used in benchmark"
