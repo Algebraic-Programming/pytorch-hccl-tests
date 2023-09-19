@@ -12,7 +12,7 @@ from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 logger = logging.getLogger(__name__)
 
 
-def osu_allreduce(args):
+def allreduce(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()

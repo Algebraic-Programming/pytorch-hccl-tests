@@ -15,7 +15,7 @@ from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 logger = logging.getLogger(__name__)
 
 
-def osu_latency(args):
+def latency(args):
     backend = args.backend
     rank = dist.get_rank()
     dtype = get_dtype(args.dtype)

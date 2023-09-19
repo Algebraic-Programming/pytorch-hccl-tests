@@ -43,6 +43,7 @@ def get_device(backend: str, local_rank: int):
 
 
 def dist_init(device: str, rank: int):
+    logger.info(f"Init distributed env device: {device} / rank {rank}")
     backend = None
     if device == "cpu":
         backend = "gloo"

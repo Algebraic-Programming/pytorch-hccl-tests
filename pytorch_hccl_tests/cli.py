@@ -6,14 +6,16 @@ import sys
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import dist_init, log_env_info, setup_loggers
-from pytorch_hccl_tests.osu.p2p import osu_bibw, osu_bw, osu_latency, osu_multi_lat
+from pytorch_hccl_tests.osu.p2p import bibw, bw, latency, multi_lat
 from pytorch_hccl_tests.osu.collectives import (
-    osu_allreduce,
-    osu_broadcast,
-    osu_alltoall,
+    allreduce,
+    broadcast,
+    alltoall,
+    allgather,
+    reducescatter,
 )
 from pytorch_hccl_tests.osu.parser import get_parser
-from pytorch_hccl_tests.osu.startup import osu_hello
+from pytorch_hccl_tests.osu.startup import hello
 
 logger = logging.getLogger(__name__)
 
@@ -21,14 +23,16 @@ logger = logging.getLogger(__name__)
 def select_bench(args):
     bench = args.benchmark.lower()
     switcher = {
-        "hello": osu_hello,
-        "latency": osu_latency,
-        "bandwidth": osu_bw,
-        "bibw": osu_bibw,
-        "multi-latency": osu_multi_lat,
-        "allreduce": osu_allreduce,
-        "broadcast": osu_broadcast,
-        "alltoall": osu_alltoall,
+        "hello": hello,
+        "latency": latency,
+        "bandwidth": bw,
+        "bibw": bibw,
+        "multi-latency": multi_lat,
+        "allreduce": allreduce,
+        "allgather": allgather,
+        "broadcast": broadcast,
+        "reducescatter": reducescatter,
+        "alltoall": alltoall,
     }
     if bench in switcher:
         switcher[bench](args)

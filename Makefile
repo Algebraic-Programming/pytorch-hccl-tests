@@ -130,7 +130,7 @@ allreduce: ## OSU MPI/HCCL allreduce benchmark
 	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark allreduce --device ${DEVICE}
 
 allgather: ## OSU MPI/HCCL allgather benchmark
-	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/osu/collectives/osu_allgather.py --device ${DEVICE}
+	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark allgather --device ${DEVICE}
 
 alltoall: ## OSU MPI/HCCL alltoall benchmark
 	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark alltoall --device ${DEVICE}
@@ -150,8 +150,12 @@ reduce: ## OSU MPI/HCCL Bandwidth benchmark
 scatter: ## OSU MPI/HCCL Bandwidth benchmark
 	torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/osu/collectives/osu_scatter.py --device ${DEVICE}
 
+reducescatter: ## OSU MPI/HCCL reduce_scatter benchmark
+	torchrun --nnodes 1 --nproc_per_node ${WORLD_SIZE} pytorch_hccl_tests/cli.py --benchmark reducescatter --device ${DEVICE}
+
+
 p2p: latency bandwidth bidirectional-bw multi-latency ## OSU MPI/HCCL point-to-point benchmark suite
 
-collectives: allreduce allgather alltoall barrier gather reduce scatter ## OSU MPI/HCCL collective communications benchmark suite
+collectives: allreduce allgather alltoall barrier gather reduce scatter reducescatter  ## OSU MPI/HCCL collective communications benchmark suite
 
 benchmarks: p2p collectives ## OSU MPI/HCCL complete benchmark suite

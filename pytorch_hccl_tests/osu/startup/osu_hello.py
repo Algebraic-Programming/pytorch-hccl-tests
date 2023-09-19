@@ -5,7 +5,7 @@ import torch.distributed as dist
 logger = logging.getLogger(__name__)
 
 
-def osu_hello(args):
+def hello(args):
     bench = args.benchmark
     rank = dist.get_rank()
     world_size = dist.get_world_size()
