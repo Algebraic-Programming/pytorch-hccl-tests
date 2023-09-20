@@ -35,10 +35,8 @@ def reducescatter(args):
         iterations = list(range(options.iterations + options.skip))
 
         recvcounts = np.zeros(world_size, dtype=np.int32)
-        portion = 0
-        remainder = 0
-        portion = (size / 4) / world_size
-        remainder = (size / 4) % world_size
+        portion = int((size / 4) // world_size)
+        remainder = int((size / 4) % world_size)
         for i in range(world_size):
             recvcounts[i] = 0
             if (size / 4) < world_size:
@@ -50,7 +48,7 @@ def reducescatter(args):
                 recvcounts[i] += portion
 
         tensor = torch.rand(recvcounts[rank], dtype=dtype).to(device)
-        tensor_list = [torch.rand(int(size / 4), dtype=dtype).to(device)] * world_size
+        tensor_list = [torch.rand(portion, dtype=dtype).to(device)] * world_size
 
         dist.barrier()
         for i in iterations:
