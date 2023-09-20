@@ -5,6 +5,7 @@ History
 0.1.3 (2023-XX-YY)
 ------------------
 * Fix bumpversion quotes
+* Fixed input tensor size bug on `reduce_scatter` benchmark
 
 
 0.1.2 (2023-09-20)
