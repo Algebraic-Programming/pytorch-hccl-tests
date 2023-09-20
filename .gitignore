@@ -1,3 +1,4 @@
+*.png
 osu_*.csv
 kernel_meta_*/
 
