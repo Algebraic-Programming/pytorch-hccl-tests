@@ -2,6 +2,11 @@
 History
 =======
 
+0.1.3 (2023-XX-YY)
+------------------
+* Fix bumpversion quotes
+
+
 0.1.2 (2023-09-20)
 ------------------
 * Fix critical bug on setting up the NPU/HCCL environment
