@@ -2,13 +2,12 @@ import logging
 from time import perf_counter as now
 
 import pandas as pd
-import torch
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
     get_device,
     wait_all,
-    get_dtype,
+    safe_rand,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -20,7 +19,7 @@ def bibw(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
     pg = None
 
@@ -42,8 +41,8 @@ def bibw(args):
         iterations = list(range(options.iterations + options.skip))
         window_sizes = list(range(window_size))
 
-        s_msg = torch.rand(size, dtype=dtype).to(device)
-        r_msg = torch.rand(size, dtype=dtype).to(device)
+        s_msg = safe_rand(size, dtype=dtype).to(device)
+        r_msg = safe_rand(size, dtype=dtype).to(device)
 
         send_requests = [None] * window_size
         recv_requests = [None] * window_size

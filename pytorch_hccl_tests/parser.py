@@ -6,6 +6,8 @@ Contact: Dr. D. K. Panda (panda@cse.ohio-state.edu)
 
 For detailed copyright and licensing information, please refer to the
 copyright file COPYRIGHT in the top level OMB directory.
+
+Modified by: Anastasios Zouzias (2023)
 """
 
 import argparse
@@ -18,7 +20,10 @@ def get_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "--benchmark", type=str, help="Name of benchmark to run", default="latency"
+        "--benchmark",
+        type=str,
+        help="Name of benchmark to run",
+        default=os.environ.get("DEVICE", "latency"),
     )
     parser.add_argument(
         "--device",

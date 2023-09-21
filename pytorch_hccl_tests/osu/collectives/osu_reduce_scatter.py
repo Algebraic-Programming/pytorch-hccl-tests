@@ -2,11 +2,10 @@ from time import perf_counter as now
 import logging
 import pandas as pd
 
-import torch
 import numpy as np
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import get_device, get_dtype
+from pytorch_hccl_tests.commons import get_device, safe_rand
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 
@@ -18,7 +17,7 @@ def reducescatter(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
     pg = None
 
@@ -47,8 +46,10 @@ def reducescatter(args):
                     recvcounts[i] += 1
                 recvcounts[i] += portion
 
-        tensor = torch.rand(recvcounts[rank], dtype=dtype).to(device)
-        tensor_list = [torch.rand(portion, dtype=dtype).to(device)] * world_size
+        # safe_rand is a wrapper of torch.rand for floats and
+        # torch.randint for integral types
+        tensor = safe_rand(recvcounts[rank], dtype=dtype).to(device)
+        tensor_list = [safe_rand(portion, dtype=dtype).to(device)] * world_size
 
         dist.barrier()
         for i in iterations:

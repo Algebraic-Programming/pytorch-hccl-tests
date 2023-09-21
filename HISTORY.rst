@@ -6,6 +6,7 @@ History
 ------------------
 * Fix bumpversion quotes
 * Fixed input tensor size bug on `reduce_scatter` benchmark
+* Cover all torch dtypes (int8/int16/uint8/etc.)
 
 
 0.1.2 (2023-09-20)

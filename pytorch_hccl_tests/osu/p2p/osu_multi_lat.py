@@ -2,10 +2,9 @@ import logging
 from time import perf_counter as now
 
 import pandas as pd
-import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import get_device, get_dtype
+from pytorch_hccl_tests.commons import get_device, safe_rand
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 
@@ -17,7 +16,7 @@ def multi_lat(args):
     rank = dist.get_rank()
     world_size = dist.get_world_size()
     pairs = int(world_size / 2)
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
     pg = None
 
@@ -33,8 +32,10 @@ def multi_lat(args):
             options.iterations = options.iterations_large
 
         iterations = list(range(options.iterations + options.skip))
-        s_msg = torch.rand(size, dtype=dtype).to(device)
-        r_msg = torch.rand(size, dtype=dtype).to(device)
+        # safe_rand is a wrapper of torch.rand for floats and
+        # torch.randint for integral types
+        s_msg = safe_rand(size, dtype=dtype).to(device)
+        r_msg = safe_rand(size, dtype=dtype).to(device)
 
         dist.barrier()
         if rank < pairs:

@@ -7,7 +7,7 @@ import torch.distributed as dist
 from pytorch_hccl_tests.commons import dist_init, log_env_info
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
-from pytorch_hccl_tests.osu.parser import get_parser
+from pytorch_hccl_tests.parser import get_parser
 
 logger = logging.getLogger(__name__)
 

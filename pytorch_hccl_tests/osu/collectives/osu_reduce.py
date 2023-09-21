@@ -3,13 +3,12 @@ import sys
 from time import perf_counter as now
 import logging
 
-import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, get_device, log_env_info, get_dtype
+from pytorch_hccl_tests.commons import dist_init, get_device, log_env_info, safe_rand
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
-from pytorch_hccl_tests.osu.parser import get_parser
+from pytorch_hccl_tests.parser import get_parser
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +18,7 @@ def osu_reduce(args):
     backend = args.backend
     rank = dist.get_rank()
     numprocs = dist.get_world_size()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
     pg = None
 
@@ -33,7 +32,7 @@ def osu_reduce(args):
             options.iterations = options.iterations_large
         iterations = list(range(options.iterations + options.skip))
 
-        msg = torch.rand(int(size / 4), dtype=dtype).to(device)
+        msg = safe_rand(int(size / 4), dtype=dtype).to(device)
 
         dist.barrier()
         for i in iterations:

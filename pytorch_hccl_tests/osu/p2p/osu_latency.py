@@ -2,12 +2,11 @@ import logging
 from time import perf_counter as now
 
 import pandas as pd
-import torch
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
     get_device,
-    get_dtype,
+    safe_rand,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 def latency(args):
     backend = args.backend
     rank = dist.get_rank()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     world_size = dist.get_world_size()
     device = get_device(backend, rank)
     pg = None
@@ -36,8 +35,8 @@ def latency(args):
             options.skip = options.skip_large
             options.iterations = options.iterations_large
         iterations = range(options.iterations + options.skip)
-        s_msg = torch.rand(size, dtype=dtype).to(device)
-        r_msg = torch.rand(size, dtype=dtype).to(device)
+        s_msg = safe_rand(size, dtype=dtype).to(device)
+        r_msg = safe_rand(size, dtype=dtype).to(device)
 
         dist.barrier()
         if rank == 0:

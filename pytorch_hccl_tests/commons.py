@@ -11,9 +11,16 @@ logger = logging.getLogger(__name__)
 
 
 _TORCH_DTYPES = {
+    "bool": torch.bool,
+    "uint8": torch.uint8,
     "int8": torch.int8,
-    "torch.int64": torch.long,
-    "long": torch.long,
+    "int16": torch.int16,
+    "short": torch.int16,
+    "int": torch.int32,
+    "int64": torch.int64,
+    "long": torch.int64,
+    "float16": torch.half,
+    "bfloat16": torch.bfloat16,
     "float": torch.float32,
     "float32": torch.float32,
     "float64": torch.float64,
@@ -22,9 +29,19 @@ _TORCH_DTYPES = {
 
 
 def get_dtype(dtype: str) -> torch.dtype:
-    dtype = _TORCH_DTYPES.get(dtype, "float")
-    logger.debug(f"Set input dtype: {dtype}")
+    dtype = _TORCH_DTYPES.get(dtype, "float16")
     return dtype
+
+
+def is_integral(dtype: str) -> bool:
+    tensor = torch.zeros(1, dtype=get_dtype(dtype))
+    return not torch.is_floating_point(tensor) and not torch.is_complex(tensor)
+
+
+def safe_rand(size: int, dtype: str) -> torch.Tensor:
+    if is_integral(dtype):
+        return torch.randint(low=0, high=100, size=(size,), dtype=get_dtype(dtype))
+    return torch.rand(size, dtype=get_dtype(dtype))
 
 
 def get_device(backend: str, local_rank: int):

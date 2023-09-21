@@ -3,13 +3,12 @@ import sys
 from time import perf_counter as now
 import logging
 
-import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, get_device, log_env_info, get_dtype
+from pytorch_hccl_tests.commons import dist_init, get_device, log_env_info, safe_rand
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
-from pytorch_hccl_tests.osu.parser import get_parser
+from pytorch_hccl_tests.parser import get_parser
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +18,7 @@ def osu_scatter(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
     pg = None
 
@@ -33,10 +32,10 @@ def osu_scatter(args):
             options.iterations = options.iterations_large
         iterations = list(range(options.iterations + options.skip))
 
-        tensor = torch.rand(size, dtype=dtype).to(device)
+        tensor = safe_rand(size, dtype=dtype).to(device)
         scatter_list = None
         if rank == 0:
-            scatter_list = [torch.rand(size, dtype=dtype).to(device)] * world_size
+            scatter_list = [safe_rand(size, dtype=dtype).to(device)] * world_size
 
         dist.barrier()
         for i in iterations:

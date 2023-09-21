@@ -2,10 +2,9 @@ from time import perf_counter as now
 import logging
 import pandas as pd
 
-import torch
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import get_device, get_dtype
+from pytorch_hccl_tests.commons import get_device, safe_rand
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
 
@@ -16,7 +15,7 @@ def allgather(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
     pg = None
 
@@ -32,8 +31,10 @@ def allgather(args):
             options.iterations = options.iterations_large
         iterations = list(range(options.iterations + options.skip))
 
-        tensor = torch.rand(size, dtype=dtype).to(device)
-        tensor_list = [torch.rand(size, dtype=dtype).to(device)] * world_size
+        # safe_rand is a wrapper of torch.rand for floats and
+        # torch.randint for integral types
+        tensor = safe_rand(size, dtype=dtype).to(device)
+        tensor_list = [safe_rand(size, dtype=dtype).to(device)] * world_size
 
         dist.barrier()
         for i in iterations:

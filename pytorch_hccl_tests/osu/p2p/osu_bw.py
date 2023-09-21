@@ -2,13 +2,12 @@ import logging
 from time import perf_counter as now
 
 import pandas as pd
-import torch
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
     get_device,
     wait_all,
-    get_dtype,
+    safe_rand,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -20,7 +19,7 @@ def bw(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
     pg = None
 
@@ -45,10 +44,12 @@ def bw(args):
 
         dist.barrier()
         if rank == 0:
+            # safe_rand is a wrapper of torch.rand for floats and
+            # torch.randint for integral types
             s_msg = [
-                torch.rand(size, dtype=dtype).to(device) for _ in range(window_size)
+                safe_rand(size, dtype=dtype).to(device) for _ in range(window_size)
             ]
-            r_msg = torch.rand(4, dtype=dtype).to(device)
+            r_msg = safe_rand(4, dtype=dtype).to(device)
             for i in iterations:
                 if i == options.skip:
                     tic = now()
@@ -58,9 +59,9 @@ def bw(args):
                 dist.recv(r_msg, 1, pg, 101)
             toc = now()
         elif rank == 1:
-            s_msg = torch.rand(4, dtype=dtype).to(device)
+            s_msg = safe_rand(4, dtype=dtype).to(device)
             r_msg = [
-                torch.rand(size, dtype=dtype).to(device) for _ in range(window_size)
+                safe_rand(size, dtype=dtype).to(device) for _ in range(window_size)
             ]
             for i in iterations:
                 for j in window_sizes:

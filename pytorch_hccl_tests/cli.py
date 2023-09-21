@@ -14,7 +14,7 @@ from pytorch_hccl_tests.osu.collectives import (
     allgather,
     reducescatter,
 )
-from pytorch_hccl_tests.osu.parser import get_parser
+from pytorch_hccl_tests.parser import get_parser
 from pytorch_hccl_tests.osu.startup import hello
 
 logger = logging.getLogger(__name__)
@@ -46,6 +46,8 @@ def select_bench(args):
 def main():  # noqa
     args = get_parser().parse_args()
     device = args.device
+    dtype = args.dtype
+    benchmark = args.benchmark
 
     log_handlers = setup_loggers(args.benchmark)
     log_level = logging.DEBUG
@@ -57,6 +59,13 @@ def main():  # noqa
 
     # rank and world_size is set by torchrun
     rank = int(os.environ["LOCAL_RANK"])
+
+    if rank == 0:
+        logger.info("*" * 30)
+        logger.info(f"Selected benchmark : {benchmark}")
+        logger.info(f"Input device param : {device}")
+        logger.info(f"Input dtype param  : {dtype}")
+        logger.info("*" * 30)
 
     # Initialize torch.distributed
     backend = dist_init(device, rank)
