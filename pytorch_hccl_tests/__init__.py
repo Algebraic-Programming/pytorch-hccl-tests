@@ -2,4 +2,4 @@
 
 __author__ = """PyTorch HCCL Authors"""
 __email__ = "hccl-tests@gmail.com"
-__version__ = "0.1.4"
+__version__ = "0.1.5"
