@@ -16,10 +16,10 @@ done
 """
 
 import sys
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-
 
 plt.rcParams["lines.markersize"] = 20
 
@@ -31,6 +31,7 @@ sns.set(font_scale=2)
 
 DEVICE = "cpu"
 BENCHMARK = "allreduce"
+DTYPE = "float32"
 WORLD_SIZES = [2, 3, 4, 5, 6, 7, 8]
 col_name = "World Size"
 
@@ -39,7 +40,7 @@ def main():
     df = pd.DataFrame()
     for world_size in WORLD_SIZES:
         s = str(world_size)
-        local = pd.read_csv(f"osu_{BENCHMARK}-{DEVICE}-{s}.csv")
+        local = pd.read_csv(f"osu_{BENCHMARK}-{DEVICE}-{DTYPE}-{s}.csv")
         local[col_name] = s
         df = pd.concat([df, local], axis=0)
     df[col_name] = pd.Categorical(df[col_name])
@@ -68,9 +69,9 @@ def main():
     ax.legend(markerscale=2)
     ax.set_xlabel("Message length (bytes)")
     ax.set_ylabel("Average Latency")
-    ax.set_title(f"OS-MPI average {BENCHMARK}")
+    ax.set_title(f"OS-MPI {BENCHMARK} benchmark\n (Device: {DEVICE} | dtype: {DTYPE})")
 
-    plt.savefig(f"plot_{BENCHMARK}.png")
+    plt.savefig(f"plot-{BENCHMARK}-{DEVICE}-{DTYPE}.png")
 
 
 if __name__ == "__main__":

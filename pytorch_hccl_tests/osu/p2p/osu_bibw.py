@@ -77,4 +77,5 @@ def bibw(args):
                 {"size_in_bytes": int(size), "bw_mb_per_sec": bw}, ignore_index=True
             )
 
-    df.to_csv(f"osu_bibw-{device}-{world_size}.csv", index=False)
+    if rank == 0:
+        df.to_csv(f"osu_bibw-{device.type}-{dtype}-{world_size}.csv", index=False)

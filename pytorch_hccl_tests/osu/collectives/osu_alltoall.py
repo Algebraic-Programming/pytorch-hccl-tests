@@ -54,4 +54,5 @@ def alltoall(args):
             )
 
     # Persist result to CSV file
-    df.to_csv(f"osu_alltoall-{device}-{world_size}.csv", index=False)
+    if rank == 0:
+        df.to_csv(f"osu_alltoall-{device.type}-{dtype}-{world_size}.csv", index=False)

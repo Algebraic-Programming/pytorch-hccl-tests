@@ -1,0 +1,1 @@
+This folder contains helpful plotting scripts for the allreduce benchmark.

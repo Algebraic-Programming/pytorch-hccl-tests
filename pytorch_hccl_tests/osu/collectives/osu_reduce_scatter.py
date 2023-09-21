@@ -71,4 +71,7 @@ def reducescatter(args):
             )
 
     # Persist result to CSV file
-    df.to_csv(f"osu_reducescatter-{device}-{world_size}.csv", index=False)
+    if rank == 0:
+        df.to_csv(
+            f"osu_reducescatter-{device.type}-{dtype}-{world_size}.csv", index=False
+        )
