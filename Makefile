@@ -105,7 +105,7 @@ install: clean ## install the package to the active Python's site-packages
 	pip install .
 
 # You can override the env variables. Example `make latency -e DEVICE=npu`
-WORLD_SIZE = 4
+export WORLD_SIZE = 4
 export DEVICE = cpu
 
 # To surpress a torchrun warning

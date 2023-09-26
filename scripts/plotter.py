@@ -1,18 +1,7 @@
 """Basic plotting utility of benchmark results. Allreduce is tested for now.
 
 
-To generate the allreduce data.
-
-#!/bin/bash
-DTYPES="int float16 float32"
-for SIZE in {2..8}
-do
-    for DTYPE in ${DTYPES}
-    do
-        echo "Allreduce (size: ${SIZE} | dtype: ${DTYPE})"
-        make allreduce -e WORLD_SIZE=${SIZE} HCCL_DTYPE=${DTYPE}
-    done
-done
+To generate the allreduce data, see `benchmark_all.sh`
 """
 
 import sys
@@ -20,6 +9,8 @@ import sys
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import os
+import torch
 
 plt.rcParams["lines.markersize"] = 20
 
@@ -29,10 +20,13 @@ sns.set_context("paper")
 sns.set(font_scale=2)
 
 
-DEVICE = "cpu"
-BENCHMARK = "allreduce"
-DTYPE = "float32"
-WORLD_SIZES = [2, 3, 4, 5, 6, 7, 8]
+DEVICE = os.environ.get("DEVICE", "cpu")
+BENCHMARK = os.environ.get("BENCH", "allreduce")
+DTYPE = os.environ.get("HCCL_DTYPE", "float16")
+PT_VER = torch.__version__
+
+# WORLD_SIZES must be in sync with `benchmark_all.sh` range
+WORLD_SIZES = [2, 3, 4, 5]
 col_name = "World Size"
 
 
@@ -68,8 +62,11 @@ def main():
     ax.set(yscale="log")
     ax.legend(markerscale=2)
     ax.set_xlabel("Message length (bytes)")
-    ax.set_ylabel("Average Latency")
-    ax.set_title(f"OS-MPI {BENCHMARK} benchmark\n (Device: {DEVICE} | dtype: {DTYPE})")
+    ax.set_ylabel("Average Latency (us)")
+    title = f"OS-MPI {BENCHMARK} benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
+    title += f" | PT: {PT_VER}"
+    title += ")"
+    ax.set_title(title)
 
     plt.savefig(f"plot-{BENCHMARK}-{DEVICE}-{DTYPE}.png")
 
