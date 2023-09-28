@@ -22,6 +22,18 @@ black:
         - pip install black==23.3.0 # The version here should be the same as in .pre-commit-config.yaml
         - black --check .
 
+
+shell_check:
+    tags:
+        - docker
+    image: koalaman/shellcheck-alpine:stable
+    stage: Static Analysis
+    before_script:
+        - shellcheck --version
+    script:
+        - shellcheck scripts/*.sh
+
+
 pypackage-install-test:
     tags:
         - docker

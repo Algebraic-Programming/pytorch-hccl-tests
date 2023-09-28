@@ -1,15 +1,19 @@
-"""Basic plotting utility of benchmark results. Allreduce is tested for now.
+#!/usr/bin/env python
+"""Basic plotting utility of latency benchmark results.
 
 
-To generate the allreduce data, see `benchmark_all.sh`
+To generate the allreduce data, see `benchmark_latency_bandwidth.sh`
+
+
+Requirements: `pip install matplotlib seaborn pandas`
 """
 
+import os
 import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import os
 import torch
 
 plt.rcParams["lines.markersize"] = 20
@@ -21,38 +25,29 @@ sns.set(font_scale=2)
 
 
 DEVICE = os.environ.get("DEVICE", "cpu")
-BENCHMARK = os.environ.get("BENCH", "allreduce")
 DTYPE = os.environ.get("HCCL_DTYPE", "float16")
 PT_VER = torch.__version__
 
-# WORLD_SIZES must be in sync with `benchmark_all.sh` range
-WORLD_SIZES = [2, 3, 4, 5]
-col_name = "World Size"
+X_LABEL = "Size (Bytes)"
+Y_LABEL = "Latency (us)"
 
 
 def main():
-    df = pd.DataFrame()
-    for world_size in WORLD_SIZES:
-        s = str(world_size)
-        local = pd.read_csv(f"osu_{BENCHMARK}-{DEVICE}-{DTYPE}-{s}.csv")
-        local[col_name] = s
-        df = pd.concat([df, local], axis=0)
-    df[col_name] = pd.Categorical(df[col_name])
+    df = pd.read_csv(f"osu_latency-{DEVICE}-{DTYPE}-2.csv")
+    df.rename(columns={"size_in_bytes": X_LABEL, "avg_latency": Y_LABEL}, inplace=True)
 
     sns.despine(right=True)
     ax = sns.lineplot(
-        x="size_in_bytes",
-        y="avg_latency",
-        hue=col_name,
+        x=X_LABEL,
+        y=Y_LABEL,
         sizes=(20, 200),
         legend=False,
         data=df,
     )
 
     ax = sns.scatterplot(
-        x="size_in_bytes",
-        y="avg_latency",
-        hue=col_name,
+        x=X_LABEL,
+        y=Y_LABEL,
         sizes=(20, 200),
         legend="auto",
         data=df,
@@ -63,12 +58,12 @@ def main():
     ax.legend(markerscale=2)
     ax.set_xlabel("Message length (bytes)")
     ax.set_ylabel("Average Latency (us)")
-    title = f"OS-MPI {BENCHMARK} benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
+    title = f"OS-MPI Latency benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
     title += f" | PT: {PT_VER}"
     title += ")"
     ax.set_title(title)
 
-    plt.savefig(f"plot-{BENCHMARK}-{DEVICE}-{DTYPE}.png")
+    plt.savefig(f"plot-latency-{DEVICE}-{DTYPE}.png")
 
 
 if __name__ == "__main__":

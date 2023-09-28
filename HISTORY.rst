@@ -2,6 +2,10 @@
 History
 =======
 
+0.1.7 (2023-XX-YY)
+------------------
+* Improve scripts functionality
+
 0.1.6 (2023-09-26)
 ------------------
 * Fix CSV output filename
