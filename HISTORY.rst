@@ -2,9 +2,10 @@
 History
 =======
 
-0.1.7 (2023-XX-YY)
+0.1.7 (2023-09-28)
 ------------------
 * Improve scripts functionality
+* Introduce plotter scripts for collectives,latency and bandwidth
 
 0.1.6 (2023-09-26)
 ------------------
