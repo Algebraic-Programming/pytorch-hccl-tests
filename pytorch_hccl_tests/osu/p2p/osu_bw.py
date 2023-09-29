@@ -70,11 +70,17 @@ def bw(args):
                 dist.send(s_msg, 0, pg, 101)
 
         if rank == 0:
-            bw = float(1e9 * size / (options.iterations * window_size))
+            size_in_bytes = float(
+                size / ((options.iterations - options.skip) * window_size)
+            )
             time_elapsed_ns = float(toc - tic)
-            logger.info("%-10d%18.2f" % (size, bw / time_elapsed_ns))
+            # 'size_in_bytes' in bytes and 'time_elapsed_ns' in nanoseconds, so scaling is 10^9/1024
+            scaling = 2 * float(1e9 / 1024.0)
+            bw = scaling * size_in_bytes / time_elapsed_ns
+            logger.info("%-10d%18.2f" % (size, bw))
             df = df.append(
-                {"size_in_bytes": int(size), "bw_mb_per_sec": bw}, ignore_index=True
+                {"size_in_bytes": int(size_in_bytes), "bw_mb_per_sec": bw},
+                ignore_index=True,
             )
 
     # Persist result to CSV file
