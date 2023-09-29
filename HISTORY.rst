@@ -2,9 +2,10 @@
 History
 =======
 
-0.1.8 (2023-XX-YY)
+0.1.8 (2023-09-29)
 ------------------
 * Measure time in nanoseconds
+* Fix bandwidth measurements (MR: 28)
 
 
 0.1.7 (2023-09-28)
