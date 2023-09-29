@@ -1,5 +1,5 @@
 import logging
-from time import perf_counter as now
+from time import perf_counter_ns as now
 
 import pandas as pd
 import torch.distributed as dist
@@ -70,9 +70,9 @@ def bibw(args):
                 wait_all(send_requests)
 
         if rank == 0:
-            bw = size / 1e6 * options.iterations * window_size * 2
-            time_elapsed = toc - tic
-            logger.info("%-10d%18.2f" % (size, bw / time_elapsed))
+            bw = 1e9 * size / (options.iterations * window_size * 2)
+            time_elapsed_ns = float(toc - tic)
+            logger.info("%-10d%18.2f" % (size, bw / time_elapsed_ns))
             df = df.append(
                 {"size_in_bytes": int(size), "bw_mb_per_sec": bw}, ignore_index=True
             )

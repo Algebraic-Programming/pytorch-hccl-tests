@@ -8,12 +8,12 @@ To generate the allreduce data, see `benchmark_collectives.sh`
 Requirements: `pip install matplotlib seaborn pandas`
 """
 
+import os
 import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import os
 import torch
 
 plt.rcParams["lines.markersize"] = 20
@@ -33,7 +33,7 @@ PT_VER = torch.__version__
 WORLD_SIZES = [2, 3, 4, 5, 6, 7, 8]
 col_name = "World Size"
 
-Y_LABEL = "Elapsed Time (us)"
+Y_LABEL = "Elapsed Time (ns)"
 
 
 def main():
@@ -75,7 +75,7 @@ def main():
     ax.legend(markerscale=2)
     ax.set_xlabel("Message length (bytes)")
     ax.set_ylabel("Average Latency (us)")
-    title = f"OS-MPI {BENCHMARK} benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
+    title = f"OSU-MPI {BENCHMARK} benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
     title += f" | PT: {PT_VER}"
     title += ")"
     ax.set_title(title)

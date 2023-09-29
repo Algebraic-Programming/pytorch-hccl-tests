@@ -20,7 +20,7 @@ do
     do
         export HCCL_DTYPE=${DTYPE}
         echo "${BENCH} (size: ${SIZE} | dtype: ${DTYPE})"
-        make "${BENCH} -e DEVICE=${DEVICE} HCCL_DTYPE=${HCCL_DTYPE}"
+        make "${BENCH}" -e DEVICE="${DEVICE}" HCCL_DTYPE="${HCCL_DTYPE}"
 
         python "${BASE_DIR}/plotter_${BENCH}.py"
     done

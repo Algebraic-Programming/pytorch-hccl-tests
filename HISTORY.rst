@@ -2,6 +2,11 @@
 History
 =======
 
+0.1.8 (2023-XX-YY)
+------------------
+* Measure time in nanoseconds
+
+
 0.1.7 (2023-09-28)
 ------------------
 * Improve scripts functionality

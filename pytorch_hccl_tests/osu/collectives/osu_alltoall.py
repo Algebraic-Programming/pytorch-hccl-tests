@@ -1,5 +1,5 @@
 import logging
-from time import perf_counter as now
+from time import perf_counter_ns as now
 
 import pandas as pd
 import torch

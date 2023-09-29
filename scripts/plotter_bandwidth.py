@@ -9,12 +9,12 @@ To generate the allreduce data, see `benchmark_latency_bandwidth.sh`
 Requirements: `pip install matplotlib seaborn pandas`
 """
 
+import os
 import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import os
 import torch
 
 plt.rcParams["lines.markersize"] = 20
@@ -58,7 +58,7 @@ def main():
 
     ax.set(xscale="log")
     ax.set(yscale="log")
-    title = f"OS-MPI Bandwidth benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
+    title = f"OSU-MPI Bandwidth benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
     title += f" | PT: {PT_VER}"
     title += ")"
     ax.set_title(title)

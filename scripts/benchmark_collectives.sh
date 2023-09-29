@@ -22,7 +22,7 @@ do
         for SIZE in {2..8}
         do
             echo "${BENCH} (size: ${SIZE} | dtype: ${DTYPE})"
-            make "${BENCH} -e WORLD_SIZE=${SIZE} HCCL_DTYPE=${HCCL_DTYPE}"
+            make "${BENCH}" -e WORLD_SIZE="${SIZE}" HCCL_DTYPE="${HCCL_DTYPE}"
         done
 
         python "${BASE_DIR}/plotter_collectives.py"

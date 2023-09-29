@@ -1,4 +1,4 @@
-from time import perf_counter as now
+from time import perf_counter_ns as now
 import logging
 import pandas as pd
 
