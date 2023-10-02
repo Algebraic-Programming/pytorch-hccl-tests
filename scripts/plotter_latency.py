@@ -57,7 +57,7 @@ def main():
     ax.set(yscale="log")
     ax.legend(markerscale=2)
     ax.set_xlabel("Message length (bytes)")
-    ax.set_ylabel("Average Latency (ns)")
+    ax.set_ylabel("Average Elapsed Time (ns)")
     title = f"OSU-MPI Latency benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
     title += f" | PT: {PT_VER}"
     title += ")"

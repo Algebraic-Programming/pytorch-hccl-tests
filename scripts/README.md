@@ -1,1 +1,1 @@
-This folder contains helpful plotting scripts for the allreduce benchmark.
+This folder contains helpful plotting scripts for the latency, bandwidth and collective benchmarks.

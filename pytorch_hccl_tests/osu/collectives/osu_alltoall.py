@@ -31,7 +31,7 @@ def alltoall(args):
             options.iterations = options.iterations_large
         iterations = list(range(options.iterations + options.skip))
 
-        in_tensor = torch.arange(size, dtype=dtype).to(device) + rank * world_size
+        in_tensor = torch.arange(size).type(dtype).to(device) + rank * world_size
         out_tensor = torch.zeros(size, dtype=dtype)
 
         dist.barrier()

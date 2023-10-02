@@ -2,11 +2,15 @@
 History
 =======
 
+0.1.9 (2023-10-02)
+------------------
+* Fix alltoall `torch.arange` issue
+* Improve further plotting scripts by directly using `torchrun`
+
 0.1.8 (2023-09-29)
 ------------------
 * Measure time in nanoseconds
 * Fix bandwidth measurements (MR: 28)
-
 
 0.1.7 (2023-09-28)
 ------------------
@@ -23,7 +27,6 @@ History
 * Fix bumpversion quotes
 * Fixed input tensor size bug on `reduce_scatter` benchmark
 * Cover all torch dtypes (int8/int16/uint8/etc.)
-
 
 0.1.2 (2023-09-20)
 ------------------

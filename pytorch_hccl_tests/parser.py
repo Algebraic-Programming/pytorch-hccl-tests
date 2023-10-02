@@ -12,6 +12,7 @@ Modified by: Anastasios Zouzias (2023)
 
 import argparse
 import os
+from pytorch_hccl_tests.commons import _TORCH_DTYPES
 
 
 def get_parser():
@@ -35,7 +36,7 @@ def get_parser():
     parser.add_argument(
         "--dtype",
         default=os.environ.get("HCCL_DTYPE", "float"),
-        choices=["int", "float", "double"],
+        choices=list(_TORCH_DTYPES.keys()),
         type=str,
         help="data type",
     )

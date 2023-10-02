@@ -6,8 +6,11 @@
 
 
 export DEVICE="cpu"
-DTYPES="int float16 float32"
+#DTYPES="int float16 float32"
 DTYPES="float16"
+
+# To surpress a torchrun warning
+export OMP_NUM_THREADS=1
 
 BASE_DIR=$(dirname "$0")
 
@@ -19,10 +22,13 @@ do
     do
         export BENCH=${BENCH}
         export HCCL_DTYPE=${DTYPE}
-        for SIZE in {2..8}
+        for WORLD_SIZE in {2..8}
         do
-            echo "${BENCH} (size: ${SIZE} | dtype: ${DTYPE})"
-            make "${BENCH}" -e WORLD_SIZE="${SIZE}" HCCL_DTYPE="${HCCL_DTYPE}"
+            echo "${BENCH} (world_size: ${WORLD_SIZE} | dtype: ${DTYPE})"
+            torchrun --nnodes 1 --nproc_per_node "${WORLD_SIZE}" \
+                pytorch_hccl_tests/cli.py --benchmark "${BENCH}" \
+                                          --device ${DEVICE} \
+                                          --dtype "${HCCL_DTYPE}"
         done
 
         python "${BASE_DIR}/plotter_collectives.py"
