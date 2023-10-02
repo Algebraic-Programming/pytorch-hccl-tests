@@ -16,7 +16,7 @@ def alltoall(args):
     backend = args.backend
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    dtype = get_dtype(args.dtype)
+    dtype = args.dtype
     device = get_device(backend, rank)
 
     options = Options("Alltoall", args)
@@ -31,8 +31,10 @@ def alltoall(args):
             options.iterations = options.iterations_large
         iterations = list(range(options.iterations + options.skip))
 
-        in_tensor = torch.arange(size).type(dtype).to(device) + rank * world_size
-        out_tensor = torch.zeros(size, dtype=dtype)
+        in_tensor = (
+            torch.arange(size).type(get_dtype(dtype)).to(device) + rank * world_size
+        )
+        out_tensor = torch.zeros(size, dtype=get_dtype(dtype))
 
         dist.barrier()
         for i in iterations:
