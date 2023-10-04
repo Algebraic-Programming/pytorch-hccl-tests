@@ -85,8 +85,8 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-install-cuda: ## Install package for CUDA backend testing
-	pip install torch==1.13.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
+install-cuda: ## Install package for CUDA backend testing. Use PyTorch 1.11.0 for fair comparison
+	pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113
 	pip install .
 
 install-npu-x86: clean ## Install package for Ascend backend testing (x86)
