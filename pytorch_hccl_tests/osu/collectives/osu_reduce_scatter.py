@@ -1,14 +1,18 @@
-from time import perf_counter_ns as now
 import logging
-import pandas as pd
 
 import numpy as np
+import pandas as pd
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import get_device, safe_rand
+from pytorch_hccl_tests.commons import (
+    elaspsed_time_ms,
+    get_device,
+    get_device_event,
+    safe_rand,
+    sync_device,
+)
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
-
 
 logger = logging.getLogger(__name__)
 
@@ -54,13 +58,15 @@ def reducescatter(args):
         dist.barrier()
         for i in iterations:
             if i == options.skip:
-                tic = now()
+                start_event = get_device_event(backend)
             dist.reduce_scatter(tensor, tensor_list, dist.ReduceOp.SUM, pg, False)
-        toc = now()
+        end_event = get_device_event(backend)
+        sync_device(backend)
         dist.barrier()
 
+        total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
         avg_latency = Utils.avg_lat(
-            toc, tic, 2 * options.iterations, world_size, device
+            total_time_ms, 2 * options.iterations, world_size, device
         )
 
         if rank == 0:

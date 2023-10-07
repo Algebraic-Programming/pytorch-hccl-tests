@@ -1,15 +1,17 @@
-import os
-import sys
-from time import perf_counter_ns as now
 import logging
 
+import pandas as pd
 import torch.distributed as dist
 
-from pytorch_hccl_tests.commons import dist_init, get_device, log_env_info, safe_rand
+from pytorch_hccl_tests.commons import (
+    elaspsed_time_ms,
+    get_device,
+    get_device_event,
+    safe_rand,
+    sync_device,
+)
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
-from pytorch_hccl_tests.parser import get_parser
-
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +27,8 @@ def osu_gather(args):
     options = Options("Gather", args)
     Utils.check_numprocs(world_size, rank, limit=3)
     Utils.print_header(options.benchmark, rank)
+
+    df = pd.DataFrame(columns=["size_in_bytes", "avg_latency"])
 
     for size in Utils.message_sizes(options):
         if size > options.large_message_size:
@@ -42,31 +46,23 @@ def osu_gather(args):
         dist.barrier()
         for i in iterations:
             if i == options.skip:
-                tic = now()
+                start_event = get_device_event(backend)
             dist.gather(tensor, gather_list, 0, pg, False)
-        toc = now()
+        end_event = get_device_event(backend)
+        sync_device(backend)
         dist.barrier()
 
-        Utils.print_stats(toc, tic, options.iterations, rank, world_size, size)
+        total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
+        avg_latency = Utils.avg_lat(
+            total_time_ms, 2 * options.iterations, world_size, device
+        )
 
+        if rank == 0:
+            logger.info("%-10d%18.2f" % (size, avg_latency))
+            df = df.append(
+                {"size_in_bytes": int(size), "avg_latency": avg_latency},
+                ignore_index=True,
+            )
 
-def main():
-    args = get_parser().parse_args()
-    device = args.device
-
-    # rank and world_size is set by torchrun
-    rank = int(os.environ["LOCAL_RANK"])
-
-    # Initialize torch.distributed
-    backend = dist_init(device, rank)
     if rank == 0:
-        log_env_info(device, backend)
-
-    osu_gather(args=args)
-
-    # Stop process group
-    dist.destroy_process_group()
-
-
-if __name__ == "__main__":
-    sys.exit(main())  # noqa
+        df.to_csv(f"osu_gather-{device.type}-{dtype}-{world_size}.csv", index=False)

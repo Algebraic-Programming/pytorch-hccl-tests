@@ -5,7 +5,7 @@
 
 
 
-export DEVICE="cpu"
+export DEVICE="npu"
 #DTYPES="int float16 float32"
 DTYPES="float16"
 
@@ -16,6 +16,7 @@ BASE_DIR=$(dirname "$0")
 
 
 COLLECTIVES="broadcast allreduce allgather reducescatter alltoall"
+
 for BENCH in ${COLLECTIVES}
 do
     for DTYPE in ${DTYPES}

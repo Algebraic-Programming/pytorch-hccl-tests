@@ -6,16 +6,17 @@ import sys
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import dist_init, log_env_info, setup_loggers
-from pytorch_hccl_tests.osu.p2p import bibw, bw, latency, multi_lat
 from pytorch_hccl_tests.osu.collectives import (
-    allreduce,
-    broadcast,
-    alltoall,
     allgather,
+    allreduce,
+    alltoall,
+    barrier,
+    broadcast,
     reducescatter,
 )
-from pytorch_hccl_tests.parser import get_parser
+from pytorch_hccl_tests.osu.p2p import bibw, bw, latency, multi_lat
 from pytorch_hccl_tests.osu.startup import hello
+from pytorch_hccl_tests.parser import get_parser
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,7 @@ def select_bench(args):
         "broadcast": broadcast,
         "reducescatter": reducescatter,
         "alltoall": alltoall,
+        "barrier": barrier,
     }
     if bench in switcher:
         switcher[bench](args)

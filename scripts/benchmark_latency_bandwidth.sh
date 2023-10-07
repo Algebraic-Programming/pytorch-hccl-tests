@@ -4,7 +4,7 @@
 # Generates multiple CSV/PNG files
 
 
-export DEVICE="cpu"
+DEVICE="npu"
 DTYPES="int float16 float32"
 DTYPES="float16"
 
@@ -15,7 +15,7 @@ BASE_DIR=$(dirname "$0")
 
 
 # Generate results for latency/bandwidth
-export P2P_BENCHS="latency bandwidth"
+P2P_BENCHS="latency bandwidth"
 for BENCH in ${P2P_BENCHS}
 do
     for DTYPE in ${DTYPES}

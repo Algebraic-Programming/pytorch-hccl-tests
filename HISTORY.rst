@@ -4,7 +4,8 @@ History
 
 0.1.10 (2023-XX-YY)
 ------------------
-* TBD
+* Fix elapsed time measurement for NPU/CUDA
+* Improve plotting scripts
 
 0.1.9 (2023-10-02)
 ------------------

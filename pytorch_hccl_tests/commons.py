@@ -1,8 +1,8 @@
 import logging
-import sys
-from typing import Any, List
 import platform
-
+import sys
+from time import perf_counter_ns as now
+from typing import Any, List
 
 import torch
 import torch.distributed as dist
@@ -57,6 +57,36 @@ def get_device(backend: str, local_rank: int):
         return torch.device(f"npu:{local_rank}")
     else:
         return torch.device("cpu")
+
+
+def get_device_event(backend: str):
+    "Returns device Event"
+    if torch.cuda.is_available() and backend in ["nccl", "mpi"]:
+        event = torch.cuda.Event(enable_timing=True)
+        event.record()
+        return event
+    elif backend == "hccl":
+        event = torch.npu.Event(enable_timing=True)
+        event.record()
+        return event
+    else:
+        return now()
+
+
+def sync_device(backend: str):
+    "Synchronize device"
+    if torch.cuda.is_available() and backend in ["nccl", "mpi"]:
+        torch.cuda.synchronize()
+    elif backend == "hccl":
+        torch.npu.synchronize()
+
+
+def elaspsed_time_ms(backend: str, start, end):
+    if (torch.cuda.is_available() and backend in ["nccl", "mpi"]) or backend == "hccl":
+        # See https://pytorch.org/docs/stable/notes/cuda.html#asynchronous-execution
+        return start.elapsed_time(end)
+    else:
+        return (end - start) / 1000
 
 
 def dist_init(device: str, rank: int):

@@ -19,9 +19,9 @@ logger = logging.getLogger(__name__)
 
 
 class Utils:
-    def avg_lat(t_end, t_start, iterations, num_procs, device: torch.device):
+    def avg_lat(elapsed_time_ms: int, iterations, num_procs, device: torch.device):
         avg_latency = torch.tensor(
-            float(t_end - t_start) / float(iterations), dtype=torch.float64
+            elapsed_time_ms / float(iterations), dtype=torch.float64
         ).to(device)
         dist.reduce(avg_latency, 0, op=dist.ReduceOp.SUM)
         avg_latency /= float(num_procs)
@@ -30,7 +30,7 @@ class Utils:
     def print_header(benchmark, rank: int):
         if rank == 0:
             logger.info("# OMB Python MPI %s Test" % (benchmark))
-            logger.info("# %-8s%18s" % ("Size (B)", "Elapsed Time (ns)"))
+            logger.info("# %-8s%18s" % ("Size (B)", "Elapsed Time (ms)"))
 
     def check_numprocs(numprocs: int, rank: int, limit: int):
         if limit == 2:

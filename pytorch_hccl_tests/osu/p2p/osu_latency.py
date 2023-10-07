@@ -54,8 +54,9 @@ def latency(args):
                 dist.send(s_msg, 0, pg, 1)
         toc = now()
 
+        elapsed_time_ms = (toc - tic) / 1000
         avg_latency = Utils.avg_lat(
-            toc, tic, 2 * options.iterations, world_size, device
+            elapsed_time_ms, 2 * options.iterations, world_size, device
         )
 
         if rank == 0:
