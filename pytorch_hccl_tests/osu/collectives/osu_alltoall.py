@@ -39,7 +39,7 @@ def alltoall(args):
         in_tensor = (
             torch.arange(size).type(get_dtype(dtype)).to(device) + rank * world_size
         )
-        out_tensor = torch.zeros(size, dtype=get_dtype(dtype))
+        out_tensor = torch.zeros(size, dtype=get_dtype(dtype)).to(device)
 
         dist.barrier()
         for i in iterations:

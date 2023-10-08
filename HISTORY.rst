@@ -4,6 +4,14 @@ History
 
 0.1.10 (2023-XX-YY)
 ------------------
+* TBD
+
+0.1.11 (2023-10-08)
+------------------
+* Fix `alltoall` device issue
+
+0.1.10 (2023-10-07)
+------------------
 * Fix elapsed time measurement for NPU/CUDA
 * Improve plotting scripts
 
