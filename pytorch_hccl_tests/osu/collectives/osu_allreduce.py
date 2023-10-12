@@ -4,11 +4,11 @@ import pandas as pd
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
-    get_device,
-    safe_rand,
-    get_device_event,
-    sync_device,
     elaspsed_time_ms,
+    get_device,
+    get_device_event,
+    safe_rand,
+    sync_device,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -51,7 +51,7 @@ def allreduce(args):
 
         total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
         avg_latency = Utils.avg_lat(
-            total_time_ms, 2 * options.iterations, world_size, device
+            total_time_ms, options.iterations, world_size, device
         )
 
         if rank == 0:

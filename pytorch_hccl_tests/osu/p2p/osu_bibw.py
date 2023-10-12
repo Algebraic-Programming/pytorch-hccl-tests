@@ -1,13 +1,15 @@
 import logging
-from time import perf_counter_ns as now
 
 import pandas as pd
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
+    elaspsed_time_ms,
     get_device,
-    wait_all,
+    get_device_event,
     safe_rand,
+    sync_device,
+    wait_all,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -51,7 +53,7 @@ def bibw(args):
         if rank == 0:
             for i in iterations:
                 if i == options.skip:
-                    tic = now()
+                    start_event = get_device_event(backend)
                 for j in window_sizes:
                     recv_requests[j] = dist.irecv(r_msg, 1, pg, 10)
                 for j in window_sizes:
@@ -59,7 +61,8 @@ def bibw(args):
 
                 wait_all(send_requests)
                 wait_all(recv_requests)
-            toc = now()
+            end_event = get_device_event(backend)
+            sync_device(backend)
         elif rank == 1:
             for i in iterations:
                 for j in window_sizes:
@@ -70,13 +73,12 @@ def bibw(args):
                 wait_all(send_requests)
 
         if rank == 0:
-            size_in_bytes = float(
-                size / ((options.iterations - options.skip) * window_size)
-            )
-            time_elapsed_ns = float(toc - tic)
-            # 'norm_size' unit is bytes and 'time_elapsed_ns' in nanoseconds, so scaling is 10^9/1024
-            scaling = 2 * (1e9 / 1024.0)
-            bw = scaling * size_in_bytes / time_elapsed_ns
+            size_in_bytes = float(size / (options.iterations * window_size))
+            total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
+
+            # 'norm_size' unit is bytes and 'time_elapsed_ns' in nanoseconds, so scaling is 10^3/1024
+            scaling = 2 * (1e3 / 1024.0)
+            bw = scaling * size_in_bytes / total_time_ms
             logger.info("%-10d%18.2f" % (size, bw))
             df = df.append(
                 {"size_in_bytes": int(size), "bw_mb_per_sec": bw}, ignore_index=True

@@ -66,7 +66,7 @@ def reducescatter(args):
 
         total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
         avg_latency = Utils.avg_lat(
-            total_time_ms, 2 * options.iterations, world_size, device
+            total_time_ms, options.iterations, world_size, device
         )
 
         if rank == 0:

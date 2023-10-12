@@ -1,13 +1,15 @@
 import logging
-from time import perf_counter_ns as now
 
 import pandas as pd
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
+    elaspsed_time_ms,
     get_device,
-    wait_all,
+    get_device_event,
     safe_rand,
+    sync_device,
+    wait_all,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -52,12 +54,13 @@ def bw(args):
             r_msg = safe_rand(4, dtype=dtype).to(device)
             for i in iterations:
                 if i == options.skip:
-                    tic = now()
+                    start_event = get_device_event(backend)
                 for j in window_sizes:
                     requests[j] = dist.isend(s_msg[j], 1, pg, 100)
                 wait_all(requests)
                 dist.recv(r_msg, 1, pg, 101)
-            toc = now()
+            end_event = get_device_event(backend)
+            sync_device(backend)
         elif rank == 1:
             s_msg = safe_rand(4, dtype=dtype).to(device)
             r_msg = [
@@ -73,10 +76,11 @@ def bw(args):
             size_in_bytes = float(
                 size / ((options.iterations - options.skip) * window_size)
             )
-            time_elapsed_ns = float(toc - tic)
-            # 'size_in_bytes' in bytes and 'time_elapsed_ns' in nanoseconds, so scaling is 10^9/1024
-            scaling = 2 * float(1e9 / 1024.0)
-            bw = scaling * size_in_bytes / time_elapsed_ns
+            total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
+
+            # 'size_in_bytes' in bytes and 'total_time_ms' in nanoseconds, so scaling is 10^3/1024
+            scaling = 2 * float(1e3 / 1024.0)
+            bw = scaling * size_in_bytes / total_time_ms
             logger.info("%-10d%18.2f" % (size, bw))
             df = df.append(
                 {"size_in_bytes": int(size_in_bytes), "bw_mb_per_sec": bw},

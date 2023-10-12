@@ -1,12 +1,14 @@
 import logging
-from time import perf_counter_ns as now
 
 import pandas as pd
 import torch.distributed as dist
 
 from pytorch_hccl_tests.commons import (
+    elaspsed_time_ms,
     get_device,
+    get_device_event,
     safe_rand,
+    sync_device,
 )
 from pytorch_hccl_tests.osu.options import Options
 from pytorch_hccl_tests.osu.osu_util_mpi import Utils
@@ -42,21 +44,25 @@ def latency(args):
         if rank == 0:
             for i in iterations:
                 if i == options.skip:
-                    tic = now()
+                    start_event = get_device_event(backend)
                 dist.send(s_msg, 1, pg, 1)
                 dist.recv(r_msg, 1, pg, 1)
-            toc = now()
+            end_event = get_device_event(backend)
+            sync_device(backend)
         elif rank == 1:
             for i in iterations:
                 if i == options.skip:
-                    tic = now()
+                    start_event = get_device_event(backend)
                 dist.recv(r_msg, 0, pg, 1)
                 dist.send(s_msg, 0, pg, 1)
-        toc = now()
+            end_event = get_device_event(backend)
+            sync_device(backend)
+        dist.barrier()
 
-        elapsed_time_ms = (toc - tic) / 1000
+        total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
+
         avg_latency = Utils.avg_lat(
-            elapsed_time_ms, 2 * options.iterations, world_size, device
+            total_time_ms, 2 * options.iterations, world_size, device
         )
 
         if rank == 0:
