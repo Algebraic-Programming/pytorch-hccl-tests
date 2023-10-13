@@ -2,9 +2,9 @@
 History
 =======
 
-0.1.10 (2023-XX-YY)
+0.1.10 (2023-10-13)
 ------------------
-* Add device event timing in P2P benchmarks
+* Add device event timing in P2P benchmarks (bug reported by Shanlan li)
 
 0.1.11 (2023-10-08)
 ------------------
