@@ -39,7 +39,9 @@ def osu_scatter(args):
         tensor = safe_rand(size, dtype=dtype).to(device)
         scatter_list = None
         if rank == 0:
-            scatter_list = [safe_rand(size, dtype=dtype).to(device)] * world_size
+            scatter_list = [
+                safe_rand(size, dtype=dtype).to(device) for _ in range(world_size)
+            ]
 
         dist.barrier()
         for i in iterations:

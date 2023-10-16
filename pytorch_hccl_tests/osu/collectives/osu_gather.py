@@ -41,7 +41,9 @@ def osu_gather(args):
         tensor = safe_rand(size, dtype=dtype).to(device)
         gather_list = None
         if rank == 0:
-            gather_list = [safe_rand(size, dtype=dtype).to(device)] * world_size
+            gather_list = [
+                safe_rand(size, dtype=dtype).to(device) for _ in range(world_size)
+            ]
 
         dist.barrier()
         for i in iterations:

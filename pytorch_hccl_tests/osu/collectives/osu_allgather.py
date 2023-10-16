@@ -39,7 +39,9 @@ def allgather(args):
         # safe_rand is a wrapper of torch.rand for floats and
         # torch.randint for integral types
         tensor = safe_rand(size, dtype=dtype).to(device)
-        tensor_list = [safe_rand(size, dtype=dtype).to(device)] * world_size
+        tensor_list = [
+            safe_rand(size, dtype=dtype).to(device) for _ in range(world_size)
+        ]
 
         dist.barrier()
         for i in iterations:

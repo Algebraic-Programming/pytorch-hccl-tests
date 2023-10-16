@@ -53,7 +53,9 @@ def reducescatter(args):
         # safe_rand is a wrapper of torch.rand for floats and
         # torch.randint for integral types
         tensor = safe_rand(recvcounts[rank], dtype=dtype).to(device)
-        tensor_list = [safe_rand(portion, dtype=dtype).to(device)] * world_size
+        tensor_list = [
+            safe_rand(portion, dtype=dtype).to(device) for _ in range(world_size)
+        ]
 
         dist.barrier()
         for i in iterations:
