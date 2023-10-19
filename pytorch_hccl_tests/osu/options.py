@@ -17,7 +17,7 @@ class Options:
         self.skip = 1000
         self.skip_large = 10
         self.min_message_size = 1 << 10
-        self.max_message_size = 1 << 25
+        self.max_message_size = 1 << 27
         self.large_message_size = 8192
         self.buffer = None
         self.benchmark = benchmark_name
@@ -44,7 +44,7 @@ class Options:
         if self.args.max:
             self.max_message_size = self.args.max
         elif self.args.benchmark in pt2pt:
-            self.max_message_size = 1 << 22
+            self.max_message_size = 1 << 25
         if self.args.min:
             self.min_message_size = self.args.min
         elif self.args.benchmark in {"latency", "multi_lat"}:
