@@ -2,6 +2,11 @@
 History
 =======
 
+0.1.13 (2023-11-06)
+------------------
+* ModelArts multi-node entrypoint script
+* Fix local/global rank ambiguity
+
 0.1.12 (2023-10-13)
 ------------------
 * Add device event timing in P2P benchmarks (bug reported by Shanlan li)

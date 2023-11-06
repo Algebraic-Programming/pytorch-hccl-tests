@@ -60,18 +60,22 @@ def main():  # noqa
     )
 
     # rank and world_size is set by torchrun
-    rank = int(os.environ["LOCAL_RANK"])
+    rank = int(os.environ["RANK"])
+    local_rank = int(os.environ["LOCAL_RANK"])
 
     if rank == 0:
         logger.info("*" * 30)
         logger.info(f"Selected benchmark : {benchmark}")
         logger.info(f"Input device param : {device}")
         logger.info(f"Input dtype param  : {dtype}")
+        logger.info(f"Global rank        : {rank}")
+        logger.info(f"Local rank         : {local_rank}")
         logger.info("*" * 30)
 
     # Initialize torch.distributed
-    backend = dist_init(device, rank)
+    backend = dist_init(device, local_rank)
     args.backend = backend
+    args.local_rank = local_rank
     if rank == 0:
         log_env_info(device, backend)
 

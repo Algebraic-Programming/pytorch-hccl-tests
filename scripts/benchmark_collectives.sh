@@ -3,6 +3,8 @@
 # Benchmark a communication pattern for various world sizes and dtypes
 # Generates multiple CSV/PNG files
 
+# Install seabon for plotting
+pip install seaborn==0.12.2
 
 
 export DEVICE="npu"

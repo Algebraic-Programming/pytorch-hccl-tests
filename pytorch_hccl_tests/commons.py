@@ -89,8 +89,8 @@ def elaspsed_time_ms(backend: str, start, end):
         return (end - start) / 1000
 
 
-def dist_init(device: str, rank: int):
-    logger.info(f"Init distributed env device: {device} / rank {rank}")
+def dist_init(device: str, local_rank: int):
+    logger.info(f"Init distributed env device: {device} / local_rank {local_rank}")
     backend = None
     if device == "cpu":
         backend = "gloo"
@@ -102,10 +102,10 @@ def dist_init(device: str, rank: int):
             raise ImportError(
                 "You must install PyTorch Ascend Adaptor from https://gitee.com/ascend/pytorch."
             )
-        torch.npu.set_device(rank)
+        torch.npu.set_device(local_rank)
         backend = "hccl"
     elif device == "cuda":
-        torch.cuda.set_device(rank)
+        torch.cuda.set_device(local_rank)
         backend = "nccl"
     else:
         raise ValueError("unknown device")

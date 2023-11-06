@@ -22,7 +22,7 @@ def reducescatter(args):
     rank = dist.get_rank()
     world_size = dist.get_world_size()
     dtype = args.dtype
-    device = get_device(backend, rank)
+    device = get_device(backend, args.local_rank)
     pg = None
 
     options = Options("Reduce_scatter", args)
