@@ -2,7 +2,11 @@
 History
 =======
 
-0.1.14 (2023-XX-YY)
+0.1.15 (2023-XX-YY)
+------------------
+* TBD
+
+0.1.14 (2023-11-12)
 ------------------
 * Normalize dataframe column name to `avg_latency_ms`
 * Fix size_in_bytes to take into account dtype
