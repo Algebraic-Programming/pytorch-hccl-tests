@@ -37,7 +37,7 @@ Y_LABEL = "Elapsed Time (ms)"
 
 
 def main():
-    df = pd.DataFrame(columns=["size_in_bytes", "avg_latency", col_name])
+    df = pd.DataFrame(columns=["size_in_bytes", "avg_latency_ms", col_name])
     df.rename(columns={"avg_latency_ms": Y_LABEL}, inplace=True)
 
     for world_size in WORLD_SIZES:
