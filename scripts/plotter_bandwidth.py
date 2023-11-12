@@ -29,8 +29,8 @@ DEVICE = os.environ.get("DEVICE", "cpu")
 DTYPE = os.environ.get("HCCL_DTYPE", "float16")
 PT_VER = torch.__version__
 
-X_LABEL = "Size (B)"
-Y_LABEL = "Bandwidth (MB/s)"
+X_LABEL = "size_in_bytes"
+Y_LABEL = "bw_mb_per_sec"
 
 
 def main():
@@ -58,6 +58,8 @@ def main():
 
     ax.set(xscale="log")
     ax.set(yscale="log")
+    ax.set_xlabel("Message length (bytes)")
+    ax.set_ylabel("Bandwidth (MB/s)")
     title = f"OSU-MPI Bandwidth benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
     title += f" | PT: {PT_VER}"
     title += ")"

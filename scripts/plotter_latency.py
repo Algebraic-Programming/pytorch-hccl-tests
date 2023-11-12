@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 """Basic plotting utility of latency benchmark results.
 
-
 To generate the allreduce data, see `benchmark_latency_bandwidth.sh`
-
 
 Requirements: `pip install matplotlib seaborn pandas`
 """
@@ -28,8 +26,8 @@ DEVICE = os.environ.get("DEVICE", "cpu")
 DTYPE = os.environ.get("HCCL_DTYPE", "float16")
 PT_VER = torch.__version__
 
-X_LABEL = "Size (Bytes)"
-Y_LABEL = "Elapsed Time (ms)"
+X_LABEL = "size_in_bytes"
+Y_LABEL = "avg_latency_ms"
 
 
 def main():

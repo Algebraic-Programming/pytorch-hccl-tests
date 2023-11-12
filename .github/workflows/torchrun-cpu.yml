@@ -1,4 +1,4 @@
-name: torchrun allreduce (CPU)
+name: Pytorch HCCL CI (CPU)
 
 on:
   push:
@@ -35,8 +35,8 @@ jobs:
       - name: Install package with PyTorch/CPU
         run: make install
 
-      - name: Run torchrun allreduce (CPU/int tensors)
-        run: torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/allreduce_int.py --device cpu
+      - name: Run torchrun allreduce (CPU)
+        run: torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark allreduce --device cpu
 
       - name: Run latency benchmark (CPU)
         run: torchrun --nnodes 1 --nproc_per_node 2 pytorch_hccl_tests/cli.py --benchmark latency --device cpu

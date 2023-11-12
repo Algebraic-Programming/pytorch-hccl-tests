@@ -33,12 +33,12 @@ PT_VER = torch.__version__
 WORLD_SIZES = [2, 3, 4, 5, 6, 7, 8]
 col_name = "World Size"
 
-Y_LABEL = "Elapsed Time (ms)"
+X_LABEL = "size_in_bytes"
+Y_LABEL = "avg_latency_ms"
 
 
 def main():
     df = pd.DataFrame(columns=["size_in_bytes", "avg_latency_ms", col_name])
-    df.rename(columns={"avg_latency_ms": Y_LABEL}, inplace=True)
 
     for world_size in WORLD_SIZES:
         s = str(world_size)
@@ -53,8 +53,8 @@ def main():
 
     sns.despine(right=True)
     ax = sns.lineplot(
-        x="size_in_bytes",
-        y="avg_latency_ms",
+        x=X_LABEL,
+        y=Y_LABEL,
         hue=col_name,
         sizes=(20, 200),
         legend=False,
@@ -62,8 +62,8 @@ def main():
     )
 
     ax = sns.scatterplot(
-        x="size_in_bytes",
-        y="avg_latency_ms",
+        x=X_LABEL,
+        y=Y_LABEL,
         hue=col_name,
         sizes=(20, 200),
         legend="auto",
