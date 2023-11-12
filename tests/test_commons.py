@@ -1,6 +1,11 @@
 import torch
 
-from pytorch_hccl_tests.commons import get_device, get_dtype, is_integral
+from pytorch_hccl_tests.commons import (
+    get_device,
+    get_dtype,
+    get_nbytes_from_dtype,
+    is_integral,
+)
 
 
 def test_get_device():
@@ -49,3 +54,19 @@ def test_is_integral_float():
 
 def test_is_integral_double():
     assert not is_integral("double")
+
+
+def test_get_nbytes_from_dtype_float16():
+    assert get_nbytes_from_dtype("float16") == 2
+
+
+def test_get_nbytes_from_dtype_float32():
+    assert get_nbytes_from_dtype("float") == 4
+
+
+def test_get_nbytes_from_dtype_int():
+    assert get_nbytes_from_dtype("int") == 4
+
+
+def test_get_nbytes_from_dtype_long():
+    assert get_nbytes_from_dtype("long") == 8

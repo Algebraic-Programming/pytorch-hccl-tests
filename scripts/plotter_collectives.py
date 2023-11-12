@@ -33,12 +33,12 @@ PT_VER = torch.__version__
 WORLD_SIZES = [2, 3, 4, 5, 6, 7, 8]
 col_name = "World Size"
 
-Y_LABEL = "Elapsed Time (ns)"
+Y_LABEL = "Elapsed Time (ms)"
 
 
 def main():
     df = pd.DataFrame(columns=["size_in_bytes", "avg_latency", col_name])
-    df.rename(columns={"avg_latency": Y_LABEL}, inplace=True)
+    df.rename(columns={"avg_latency_ms": Y_LABEL}, inplace=True)
 
     for world_size in WORLD_SIZES:
         s = str(world_size)
@@ -54,7 +54,7 @@ def main():
     sns.despine(right=True)
     ax = sns.lineplot(
         x="size_in_bytes",
-        y="avg_latency",
+        y="avg_latency_ms",
         hue=col_name,
         sizes=(20, 200),
         legend=False,
@@ -63,7 +63,7 @@ def main():
 
     ax = sns.scatterplot(
         x="size_in_bytes",
-        y="avg_latency",
+        y="avg_latency_ms",
         hue=col_name,
         sizes=(20, 200),
         legend="auto",
@@ -74,7 +74,7 @@ def main():
     ax.set(yscale="log")
     ax.legend(markerscale=2)
     ax.set_xlabel("Message length (bytes)")
-    ax.set_ylabel("Average Elapsed Time (ns)")
+    ax.set_ylabel("Average Elapsed Time (ms)")
     title = f"OSU-MPI {BENCHMARK} benchmark\n (Device: {DEVICE} | dtype: {DTYPE}"
     title += f" | PT: {PT_VER}"
     title += ")"

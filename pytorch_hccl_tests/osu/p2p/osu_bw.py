@@ -7,6 +7,7 @@ from pytorch_hccl_tests.commons import (
     elaspsed_time_ms,
     get_device,
     get_device_event,
+    get_nbytes_from_dtype,
     safe_rand,
     sync_device,
     wait_all,
@@ -40,7 +41,6 @@ def bw(args):
             options.skip = options.skip_large
             options.iterations = options.iterations_large
 
-        iterations = range(options.iterations + options.skip)
         window_sizes = range(window_size)
         requests = [None] * window_size
 
@@ -52,7 +52,8 @@ def bw(args):
                 safe_rand(size, dtype=dtype).to(device) for _ in range(window_size)
             ]
             r_msg = safe_rand(4, dtype=dtype).to(device)
-            for i in iterations:
+            # Iterate 'options.iterations' times and skip first iterations (warm-up)
+            for i in range(options.iterations + options.skip):
                 if i == options.skip:
                     start_event = get_device_event(backend)
                 for j in window_sizes:
@@ -66,24 +67,26 @@ def bw(args):
             r_msg = [
                 safe_rand(size, dtype=dtype).to(device) for _ in range(window_size)
             ]
-            for i in iterations:
+            for i in range(options.iterations + options.skip):
                 for j in window_sizes:
                     requests[j] = dist.irecv(r_msg[j], 0, pg, 100)
                 wait_all(requests)
                 dist.send(s_msg, 0, pg, 101)
 
         if rank == 0:
-            size_in_bytes = float(
-                size / ((options.iterations - options.skip) * window_size)
-            )
-            total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
+            size_in_bytes = int(size) * get_nbytes_from_dtype(dtype)
 
-            # 'size_in_bytes' in bytes and 'total_time_ms' in nanoseconds, so scaling is 10^3/1024
-            scaling = 2 * float(1e3 / 1024.0)
-            bw = scaling * size_in_bytes / total_time_ms
+            # Number of total_iterations
+            total_iterations = options.iterations * window_size
+
+            total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
+            total_time_sec_per_iter = total_time_ms / (1000 * total_iterations)
+
+            # 'size_in_bytes' in bytes, rescale to MBs (1/1024)
+            bw_mb_per_sec = size_in_bytes / (1024 * total_time_sec_per_iter)
             logger.info("%-10d%18.2f" % (size, bw))
             df = df.append(
-                {"size_in_bytes": int(size_in_bytes), "bw_mb_per_sec": bw},
+                {"size_in_bytes": int(size_in_bytes), "bw_mb_per_sec": bw_mb_per_sec},
                 ignore_index=True,
             )
 

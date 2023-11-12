@@ -33,6 +33,19 @@ def get_dtype(dtype: str) -> torch.dtype:
     return dtype
 
 
+def get_nbytes_from_dtype(dtype: str) -> int:
+    if dtype in {"uint8", "int8"}:
+        return 1
+    elif dtype in {"int16", "short", "float16", "bfloat16"}:
+        return 2
+    elif dtype in {"int", "float", "float32"}:
+        return 4
+    elif dtype in {"double", "float64", "long", "int64"}:
+        return 8
+    else:
+        raise NotImplementedError(f"dtype '{dtype}' is not supported")
+
+
 def is_integral(dtype: str) -> bool:
     tensor = torch.zeros(1, dtype=get_dtype(dtype))
     return not torch.is_floating_point(tensor) and not torch.is_complex(tensor)

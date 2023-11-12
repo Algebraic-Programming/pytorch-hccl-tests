@@ -29,12 +29,14 @@ DTYPE = os.environ.get("HCCL_DTYPE", "float16")
 PT_VER = torch.__version__
 
 X_LABEL = "Size (Bytes)"
-Y_LABEL = "Latency (us)"
+Y_LABEL = "Elapsed Time (ms)"
 
 
 def main():
     df = pd.read_csv(f"osu_latency-{DEVICE}-{DTYPE}-2.csv")
-    df.rename(columns={"size_in_bytes": X_LABEL, "avg_latency": Y_LABEL}, inplace=True)
+    df.rename(
+        columns={"size_in_bytes": X_LABEL, "avg_latency_ms": Y_LABEL}, inplace=True
+    )
 
     sns.despine(right=True)
     ax = sns.lineplot(

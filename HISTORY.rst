@@ -2,6 +2,11 @@
 History
 =======
 
+0.1.14 (2023-XX-YY)
+------------------
+* Normalize dataframe column name to `avg_latency_ms`
+* Fix size_in_bytes to take into account dtype
+
 0.1.13 (2023-11-06)
 ------------------
 * ModelArts multi-node entrypoint script

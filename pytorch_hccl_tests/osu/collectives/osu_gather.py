@@ -7,6 +7,7 @@ from pytorch_hccl_tests.commons import (
     elaspsed_time_ms,
     get_device,
     get_device_event,
+    get_nbytes_from_dtype,
     safe_rand,
     sync_device,
 )
@@ -34,7 +35,6 @@ def osu_gather(args):
         if size > options.large_message_size:
             options.skip = options.skip_large
             options.iterations = options.iterations_large
-        iterations = list(range(options.iterations + options.skip))
 
         # safe_rand is a wrapper of torch.rand for floats and
         # torch.randint for integral types
@@ -46,7 +46,7 @@ def osu_gather(args):
             ]
 
         dist.barrier()
-        for i in iterations:
+        for i in range(options.iterations + options.skip):
             if i == options.skip:
                 start_event = get_device_event(backend)
             dist.gather(tensor, gather_list, 0, pg, False)
@@ -55,14 +55,15 @@ def osu_gather(args):
         dist.barrier()
 
         total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
-        avg_latency = Utils.avg_lat(
+        avg_latency_ms = Utils.avg_lat(
             total_time_ms, options.iterations, world_size, device
         )
 
         if rank == 0:
-            logger.info("%-10d%18.2f" % (size, avg_latency))
+            logger.info("%-10d%18.2f" % (size, avg_latency_ms))
+            size_in_bytes = int(size) * get_nbytes_from_dtype(dtype)
             df = df.append(
-                {"size_in_bytes": int(size), "avg_latency": avg_latency},
+                {"size_in_bytes": size_in_bytes, "avg_latency_ms": avg_latency_ms},
                 ignore_index=True,
             )
 

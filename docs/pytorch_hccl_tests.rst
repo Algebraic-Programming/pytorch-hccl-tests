@@ -12,18 +12,10 @@ Subpackages
 Submodules
 ----------
 
-pytorch\_hccl\_tests.allreduce\_float module
---------------------------------------------
+pytorch\_hccl\_tests.cli module
+-------------------------------
 
-.. automodule:: pytorch_hccl_tests.allreduce_float
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pytorch\_hccl\_tests.allreduce\_int module
-------------------------------------------
-
-.. automodule:: pytorch_hccl_tests.allreduce_int
+.. automodule:: pytorch_hccl_tests.cli
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,6 +24,14 @@ pytorch\_hccl\_tests.commons module
 -----------------------------------
 
 .. automodule:: pytorch_hccl_tests.commons
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pytorch\_hccl\_tests.parser module
+----------------------------------
+
+.. automodule:: pytorch_hccl_tests.parser
    :members:
    :undoc-members:
    :show-inheritance:
