@@ -82,7 +82,7 @@ def bibw(args):
             total_time_sec_per_iter = total_time_ms / (1000 * total_iterations)
 
             bw = size_in_bytes / total_time_ms
-            logger.info("%-10d%18.2f" % (size, bw))
+            logger.info("%-10d%18.2f" % (size_in_bytes, bw))
             df = df.append(
                 {"size_in_bytes": int(size), "bw_mb_per_sec": total_time_sec_per_iter},
                 ignore_index=True,

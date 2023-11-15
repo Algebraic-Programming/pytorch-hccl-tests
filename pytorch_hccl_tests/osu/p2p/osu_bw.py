@@ -84,7 +84,7 @@ def bw(args):
 
             # 'size_in_bytes' in bytes, rescale to MBs (1/1024)
             bw_mb_per_sec = size_in_bytes / (1024 * total_time_sec_per_iter)
-            logger.info("%-10d%18.2f" % (size, bw))
+            logger.info("%-10d%18.2f" % (size_in_bytes, bw_mb_per_sec))
             df = df.append(
                 {"size_in_bytes": int(size_in_bytes), "bw_mb_per_sec": bw_mb_per_sec},
                 ignore_index=True,

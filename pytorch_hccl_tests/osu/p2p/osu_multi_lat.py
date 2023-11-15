@@ -7,6 +7,7 @@ from pytorch_hccl_tests.commons import (
     elaspsed_time_ms,
     get_device,
     get_device_event,
+    get_nbytes_from_dtype,
     safe_rand,
 )
 from pytorch_hccl_tests.osu.options import Options
@@ -61,14 +62,15 @@ def multi_lat(args):
 
         total_time_ms = elaspsed_time_ms(backend, start_event, end_event)
 
-        avg_latency = Utils.avg_lat(
-            total_time_ms, 2 * options.iterations, world_size, device
+        avg_latency_ms = (
+            Utils.avg_lat(total_time_ms, options.iterations, world_size, device) / 2
         )
 
         if rank == 0:
-            logger.info("%-10d%18.2f" % (size, avg_latency))
+            size_in_bytes = int(size) * get_nbytes_from_dtype(dtype)
+            logger.info("%-10d%18.2f" % (size_in_bytes, avg_latency_ms))
             df = df.append(
-                {"size_in_bytes": int(size), "avg_latency": avg_latency},
+                {"size_in_bytes": int(size), "avg_latency_ms": avg_latency_ms},
                 ignore_index=True,
             )
 

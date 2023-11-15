@@ -9,8 +9,8 @@ copyright file COPYRIGHT in the top level OMB directory.
 """
 
 
-import math
 import logging
+import math
 
 import torch
 import torch.distributed as dist
@@ -29,7 +29,7 @@ class Utils:
 
     def print_header(benchmark, rank: int):
         if rank == 0:
-            logger.info("# OMB Python MPI %s Test" % (benchmark))
+            logger.info("# PyTorch Benchmark %s Test" % (benchmark))
             logger.info("# %-8s%18s" % ("Size (B)", "Elapsed Time (ms)"))
 
     def check_numprocs(numprocs: int, rank: int, limit: int):

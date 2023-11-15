@@ -95,8 +95,10 @@ def sync_device(backend: str):
 
 
 def elaspsed_time_ms(backend: str, start, end):
-    if (torch.cuda.is_available() and backend in ["nccl", "mpi"]) or backend == "hccl":
+    if torch.cuda.is_available() and backend in ["nccl", "mpi"]:
         # See https://pytorch.org/docs/stable/notes/cuda.html#asynchronous-execution
+        return start.elapsed_time(end)
+    elif backend == "hccl":
         return start.elapsed_time(end)
     else:
         return (end - start) / 1000
